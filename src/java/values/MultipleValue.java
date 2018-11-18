@@ -4,13 +4,10 @@ import java.util.Arrays;
 
 public class MultipleValue implements IBibtexValue {
 
-
     private final IBibtexValue[] values;
-    private final String delimiter;
 
-    public MultipleValue(IBibtexValue[] values, String delimiter) {
+    public MultipleValue(IBibtexValue[] values) {
         this.values = values;
-        this.delimiter = delimiter;
     }
 
     public IBibtexValue[] getValues() {
@@ -37,11 +34,12 @@ public class MultipleValue implements IBibtexValue {
         return null;
     }
 
+    //creates arrays of values, when value can be multiple (authors,editors), FACTORY PATTERN!
     public static IBibtexValue readMutipleValue(IBibtexValue value) {
         IBibtexValue[] values = Arrays
                 .stream(value.getString().split("\\|"))
                 .map(String::trim)
                 .toArray(IBibtexValue[]::new);
-        return new MultipleValue(values, "|");
+        return new MultipleValue(values);
     }
 }

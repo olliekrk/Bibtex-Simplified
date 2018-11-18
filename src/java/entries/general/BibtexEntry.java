@@ -26,22 +26,26 @@ public abstract class BibtexEntry {
         return id;
     }
 
+    //method to create entry, FACTORY PATTERN!
     public void insertValues(Map<String, IBibtexValue> entryValues) throws MissingRequiredEntryFieldException {
+
         Field[] fields = this.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (field.isAnnotationPresent(BibtexFieldConstraints.class)) {
                 BibtexFieldConstraints constraints = field.getAnnotation(BibtexFieldConstraints.class);
+
                 IBibtexValue value = entryValues.get(field.getName());
                 if (value == null) {
                     if (constraints.required()) {
                         throw new MissingRequiredEntryFieldException();
                     }
-                } else if (constraints.multiple()) {
+                }
+                else if (constraints.multiple()) {
                     value = MultipleValue.readMutipleValue(value);
                     try {
                         field.set(this,value);
                     } catch (IllegalAccessException e) {
-                        //exception
+                        //exception, should not happen as every entry field is public
                     }
                 }
             }

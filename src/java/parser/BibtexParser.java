@@ -1,9 +1,8 @@
 package parser;
 
 import entries.general.BibtexEntry;
-import exceptions.MissingRequiredEntryFieldException;
-import exceptions.ParsingException;
-import exceptions.UnknownEntryTypeException;
+import entries.general.BibtexEntryType;
+import exceptions.*;
 import values.IBibtexValue;
 
 import java.io.File;
@@ -14,8 +13,12 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 public class BibtexParser {
+
+    //4 ways to input data
+
     public static BibtexBibliography parseFile(String path) throws FileNotFoundException {
         return parseBibtex(new Scanner(new File(path)));
     }
@@ -32,18 +35,29 @@ public class BibtexParser {
         return parseBibtex(new Scanner(data));
     }
 
+    //one universal parsing method
+
     private static BibtexBibliography parseBibtex(Scanner scanner) {
 
         BibtexBibliography bibliography = new BibtexBibliography();
 
-        final Pattern entryPattern = Pattern.compile("@(\\w+)\\s*\\{");
+        final Pattern entrySignature = Pattern.compile("@(\\w+)\\s*\\{");
 
-        while (scanner.findWithinHorizon(entryPattern, 0) != null) {
-            String entryName = scanner.match().group(1).toLowerCase();
-            String entryData = ParserUtilities.scanData(scanner);//skanuje do znaku }
+        while (scanner.findWithinHorizon(entrySignature, 0) != null) {
+            String entryType = scanner.match().group(1).toLowerCase();
+            String entryData;
+
             try {
-                readEntry(entryName, entryData, bibliography);//jesli sie nie uda to exception
+                entryData = ParserUtilities.scanData(scanner);
+            } catch (MissingClosingBracketException e) {
+                //exception, notify, interrupts reading rest
+                return bibliography;
+            }
+
+            try {
+                readEntry(entryType, entryData, bibliography);
             } catch (Exception e) {
+                //exception, notify that it was impossible to read that Entry
                 e.printStackTrace();
             }
         }
@@ -51,34 +65,39 @@ public class BibtexParser {
         return bibliography;
     }
 
-    private static void readEntry(String entryName, String entryData, BibtexBibliography bibliography) throws ParsingException, UnknownEntryTypeException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, MissingRequiredEntryFieldException {
-        if (entryName.equals("string")) {
-            readString(entryName, entryData, bibliography);
+    //method to interpret entry of any known type
+
+    private static void readEntry(String entryType, String entryData, BibtexBibliography bibliography) throws ParsingException, UnknownEntryTypeException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, MissingRequiredEntryFieldException, InvalidEntryException, UnknownStringReferenceException {
+        if (entryType.equals("string")) {
+            readString(entryData, bibliography);
             return;
         }
-        if (entryName.equals("preamble") || entryName.equals("comment")) {
+        if (entryType.equals("preamble") || entryType.equals("comment")) {
             return;
         }
 
-        Class entryClass = BibtexEntryType.findEntryClass(entryName);
+        Class entryClass = BibtexEntryType.findEntryClass(entryType);
         if (entryClass == null) {
             throw new UnknownEntryTypeException();
         }
 
-        String[] entryFields = ParserUtilities.splitUsingDelimiter(entryData, ',');
+        //String[] entryFields = ParserUtilities.splitUsingDelimiter(entryData, ',');
+        String[] entryFields = entryData.split(",");
+        IntStream.range(0, entryFields.length).forEach(i -> entryFields[i] = entryFields[i].trim());
+
         if (entryFields.length == 0) {
-            //pusty entry, exception
-            throw new ParsingException();
+            //exception, empty entry
+            throw new InvalidEntryException();
         }
 
-        String entryId = entryFields[0].trim();
+        String entryId = entryFields[0];
         Pattern entryIdPattern = Pattern.compile("\\w+");
         if (!entryIdPattern.matcher(entryId).matches()) {
-            throw new ParsingException();
-            //pattern check, exception jesli Id nie pasuje do patternu na id
+            throw new InvalidEntryException();
+            //exception, invalid id of entry
         }
 
-        Map<String, IBibtexValue> entryValues = ParserUtilities.splitIntoValues(entryName, entryFields, bibliography);
+        Map<String, IBibtexValue> entryValues = ParserUtilities.splitIntoValues(entryType, entryFields, bibliography);
 
         BibtexEntry entry = (BibtexEntry) entryClass.getConstructor(String.class).newInstance(entryId);
 
@@ -87,18 +106,39 @@ public class BibtexParser {
         bibliography.addEntry(entry);
     }
 
-    private static void readString(String entryName, String entryData, BibtexBibliography bibliography) throws ParsingException {
-        String[] entryFields = ParserUtilities.splitUsingDelimiter(entryData, ',');
+    //method to interpret @string
+
+    private static void readString(String entryData, BibtexBibliography bibliography) throws ParsingException, InvalidEntryException {
+
+        //String[] entryFields = ParserUtilities.splitUsingDelimiter(entryData, ',');
+        String[] entryFields = entryData.split(",");
+
         if (entryFields.length != 1) {
-            throw new ParsingException();
-        }
-        Pattern fieldValuePattern = Pattern.compile("\\s*(\\w+)\\s*=\\s*(\\S.*)\\s*");
-        Matcher matcher = fieldValuePattern.matcher(entryFields[0]);
-        if (!matcher.matches()) {
-            throw new ParsingException();
+            //exception, string may have only 1 value
+            throw new InvalidEntryException();
         }
 
-        bibliography.addValue(matcher.group(1), ParserUtilities.readValuesPart(entryName, matcher.group(2), bibliography));
+        String stringField = entryFields[0].trim();
+        Pattern fieldValuePattern = Pattern.compile("(\\w+)\\s*=\\s*(\\S.*)");
+        Matcher matcher = fieldValuePattern.matcher(stringField);
+
+        if (!matcher.matches()) {
+            //exception, invalid string entry
+            throw new InvalidEntryException();
+        }
+
+
+        IBibtexValue value = null;
+
+        try {
+            value = ParserUtilities.readFieldValuePart(matcher.group(2), bibliography);
+        } catch (UnknownStringReferenceException e) {
+            //exception, notify
+        }
+
+        if (!(value == null)) {
+            bibliography.addValue(matcher.group(1), value);
+        }
     }
 
 }

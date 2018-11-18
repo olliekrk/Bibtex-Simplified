@@ -2,10 +2,10 @@ package values;
 
 import java.util.Arrays;
 
-public class ToSumValue implements IBibtexValue {
+public class ConcatenatedValue implements IBibtexValue {
     private final IBibtexValue[] values;
 
-    public ToSumValue(IBibtexValue[] values) {
+    public ConcatenatedValue(IBibtexValue[] values) {
         this.values = values;
     }
 
