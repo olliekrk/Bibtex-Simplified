@@ -10,6 +10,13 @@ public class MultipleValue implements IBibtexValue {
         this.values = values;
     }
 
+    public MultipleValue(IBibtexValue value){
+        this.values = Arrays
+                .stream(value.getString().split("\\|"))
+                .map(String::trim)
+                .toArray(IBibtexValue[]::new);
+    }
+
     public IBibtexValue[] getValues() {
         return values;
     }
@@ -35,6 +42,7 @@ public class MultipleValue implements IBibtexValue {
     }
 
     //creates arrays of values, when value can be multiple (authors,editors), FACTORY PATTERN!
+    //created second constructor instead of this
     public static IBibtexValue readMutipleValue(IBibtexValue value) {
         IBibtexValue[] values = Arrays
                 .stream(value.getString().split("\\|"))

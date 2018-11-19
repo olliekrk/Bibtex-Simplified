@@ -31,22 +31,24 @@ public abstract class BibtexEntry {
 
         Field[] fields = this.getClass().getDeclaredFields();
         for (Field field : fields) {
+
+            IBibtexValue value = entryValues.get(field.getName());
             if (field.isAnnotationPresent(BibtexFieldConstraints.class)) {
                 BibtexFieldConstraints constraints = field.getAnnotation(BibtexFieldConstraints.class);
-
-                IBibtexValue value = entryValues.get(field.getName());
-                if (value == null) {
-                    if (constraints.required()) {
-                        throw new MissingRequiredEntryFieldException();
-                    }
+                if (value == null && constraints.required()) {
+                    //exception
+                    throw new MissingRequiredEntryFieldException();
                 }
-                else if (constraints.multiple()) {
-                    value = MultipleValue.readMutipleValue(value);
-                    try {
-                        field.set(this,value);
-                    } catch (IllegalAccessException e) {
-                        //exception, should not happen as every entry field is public
-                    }
+                if (!(value == null) && constraints.multiple()) {
+                    value = new MultipleValue(value);
+                }
+            }
+            if (!(value == null)) {
+                try {
+                    field.set(this, value);
+                } catch (IllegalAccessException e) {
+                    //exception, should not happen as every entry field is public
+                    e.printStackTrace();
                 }
             }
         }

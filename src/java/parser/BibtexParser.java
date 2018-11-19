@@ -57,7 +57,7 @@ public class BibtexParser {
             try {
                 readEntry(entryType, entryData, bibliography);
             } catch (Exception e) {
-                //exception, notify that it was impossible to read that Entry
+                //exception, notify that it was impossible to read that Entry and continue
                 e.printStackTrace();
             }
         }
@@ -67,7 +67,7 @@ public class BibtexParser {
 
     //method to interpret entry of any known type
 
-    private static void readEntry(String entryType, String entryData, BibtexBibliography bibliography) throws ParsingException, UnknownEntryTypeException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, MissingRequiredEntryFieldException, InvalidEntryException, UnknownStringReferenceException {
+    private static void readEntry(String entryType, String entryData, BibtexBibliography bibliography) throws ParsingException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         if (entryType.equals("string")) {
             readString(entryData, bibliography);
             return;
@@ -87,20 +87,23 @@ public class BibtexParser {
 
         if (entryFields.length == 0) {
             //exception, empty entry
+            //consider throwing also entry containing only 1 id field
             throw new InvalidEntryException();
         }
 
         String entryId = entryFields[0];
         Pattern entryIdPattern = Pattern.compile("\\w+");
         if (!entryIdPattern.matcher(entryId).matches()) {
-            throw new InvalidEntryException();
             //exception, invalid id of entry
+            throw new InvalidEntryException();
         }
 
-        Map<String, IBibtexValue> entryValues = ParserUtilities.splitIntoValues(entryType, entryFields, bibliography);
+        Map<String, IBibtexValue> entryValues = ParserUtilities.splitIntoValues(entryFields, bibliography);
 
+        //FACTORY instead of that
         BibtexEntry entry = (BibtexEntry) entryClass.getConstructor(String.class).newInstance(entryId);
 
+        //FACTORY instead of that
         entry.insertValues(entryValues);
 
         bibliography.addEntry(entry);
@@ -108,7 +111,7 @@ public class BibtexParser {
 
     //method to interpret @string
 
-    private static void readString(String entryData, BibtexBibliography bibliography) throws ParsingException, InvalidEntryException {
+    private static void readString(String entryData, BibtexBibliography bibliography) throws ParsingException {
 
         //String[] entryFields = ParserUtilities.splitUsingDelimiter(entryData, ',');
         String[] entryFields = entryData.split(",");
@@ -127,13 +130,13 @@ public class BibtexParser {
             throw new InvalidEntryException();
         }
 
-
         IBibtexValue value = null;
 
         try {
-            value = ParserUtilities.readFieldValuePart(matcher.group(2), bibliography);
+            value = ParserUtilities.readStringValuePart(matcher.group(2), bibliography);
         } catch (UnknownStringReferenceException e) {
             //exception, notify
+            return;
         }
 
         if (!(value == null)) {

@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class BibtexBibliography {
     private Map<String, BibtexEntry> entries = new HashMap<>();
+
+    //contains every @string entry
     private Map<String, IBibtexValue> values = new HashMap<>();
 
     public BibtexEntry addEntry(BibtexEntry entry) {

@@ -1,3 +1,6 @@
+import values.IBibtexValue;
+import values.NumberValue;
+
 import java.util.Arrays;
 
 public class Main {
@@ -30,5 +33,11 @@ public class Main {
         String s = "ddddddddd";
         String[] ts = s.split(",");
         for (String t : ts) System.out.println(t);
+
+        IBibtexValue a = new NumberValue(22);
+        System.out.println(a.getClass().toString());
+
+        String part = "012345";
+        System.out.println((part.substring(1, part.length() - 1)));
     }
 }

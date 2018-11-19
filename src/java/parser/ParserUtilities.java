@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ParserUtilities {
+public abstract class ParserUtilities {
 
     //scans data till it encounters }
     public static String scanData(Scanner scanner) throws MissingClosingBracketException {
@@ -79,7 +79,7 @@ public class ParserUtilities {
     }
 
     // method to convert values stored as strings name="value" to map
-    public static Map<String, IBibtexValue> splitIntoValues(String entryType, String[] entryFields, BibtexBibliography bibliography) throws ParsingException, InvalidEntryException, UnknownStringReferenceException {
+    public static Map<String, IBibtexValue> splitIntoValues(String[] entryFields, BibtexBibliography bibliography) throws ParsingException, InvalidEntryException, UnknownStringReferenceException {
         Map<String, IBibtexValue> values = new HashMap<>();
 
         Pattern fieldValuePattern = Pattern.compile("(\\w+)\\s*=\\s*(\\S.*)");
@@ -92,13 +92,16 @@ public class ParserUtilities {
                 //exception, field in entry is invalid
                 throw new InvalidEntryException();
             }
-            values.put(matcher.group(1), readFieldValuePart(matcher.group(2), bibliography));
+            String fieldName = matcher.group(1);//.toLowerCase() ?
+            IBibtexValue fieldValue = readFieldValue(matcher.group(2), bibliography);
+
+            values.put(fieldName, fieldValue);
         }
         return values;
     }
 
     //method to get IBibtexValue from its string representation
-    public static IBibtexValue readFieldValuePart(String valuePart, BibtexBibliography bibliography) throws ParsingException, InvalidEntryException, UnknownStringReferenceException {
+    public static IBibtexValue readStringValuePart(String valuePart, BibtexBibliography bibliography) throws ParsingException {
         //String[] parts = splitUsingDelimiter(valuePart, '#');
         String[] parts = valuePart.split("#");
         IBibtexValue[] values = new IBibtexValue[parts.length];
@@ -118,16 +121,9 @@ public class ParserUtilities {
     }
 
     //method to get single IBibtexValue from its string representation
-    private static IBibtexValue readFieldValue(String part, BibtexBibliography bibliography) throws ParsingException, UnknownStringReferenceException {
+    private static IBibtexValue readFieldValue(String part, BibtexBibliography bibliography) throws ParsingException {
 
         part = part.trim();
-
-        //if this is @string reference
-        if (part.matches("[a-zA-Z]\\w+")) {
-            if (!bibliography.containsValue(part))
-                throw new UnknownStringReferenceException();
-            return bibliography.getValue(part);
-        }
 
         //if this is a number
         if (part.matches("\\d+"))
@@ -135,7 +131,16 @@ public class ParserUtilities {
 
         //if this is a string
         if (part.charAt(0) == '"') {
+            //return value without quotation marks " "
             return new StringValue(part.substring(1, part.length() - 1));
+        }
+
+        //if this is @string reference
+        if (part.matches("[a-zA-Z]\\w+")) {
+            if (!bibliography.containsValue(part)) {
+                throw new UnknownStringReferenceException();
+            }
+            return bibliography.getValue(part);
         }
 
         //else exception, unknown field
