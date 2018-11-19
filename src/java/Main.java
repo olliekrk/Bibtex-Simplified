@@ -1,5 +1,6 @@
-import entries.ArticleEntry;
 import entries.general.BibtexEntry;
+import parser.BibtexBibliography;
+import parser.BibtexParser;
 import printer.BibtexPrintingVisitor;
 
 public class Main {
@@ -41,8 +42,18 @@ public class Main {
 
 //        System.out.println(BibtexEntryType.findEntryType(ArticleEntry.class));
 
-        BibtexEntry e = new ArticleEntry("121211");
-        BibtexPrintingVisitor v = new BibtexPrintingVisitor('~', 20, 20);
-        e.accept(v);
+//        BibtexEntry e = new ArticleEntry("121211");
+//        BibtexPrintingVisitor v = new BibtexPrintingVisitor('~', 20, 20);
+//        e.accept(v);
+
+        String data = "@INBOOK{inbookcrossref,crossref = \"whole-set\",author=\"makapaczka\",pages=23,publisher=\"dziwaczka\",editor=\"kwaczka\",title = \"Fundamental Algorithms\",volume = 1,series = \"The Art of Computer Programming\",edition = \"Second\",year = \"1973\", type = \"Section\", chapter = \"1.2\", note = \"This is a cross-referencing INBOOK entry\",}";
+        BibtexBibliography b = BibtexParser.parseData(data);
+        BibtexPrintingVisitor v = new BibtexPrintingVisitor('+', 40, 40);
+        System.out.println(b.getAllEntries().size());
+        System.out.println(b.getAllValues().size());
+        BibtexEntry entry = b.getEntry("inbookcrossref");
+        if(entry!=null) v.visit(entry);
+
+        v.visit(b);
     }
 }

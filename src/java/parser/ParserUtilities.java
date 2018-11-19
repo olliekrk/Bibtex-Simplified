@@ -18,7 +18,7 @@ public abstract class ParserUtilities {
     //scans data till it encounters }
     public static String scanData(Scanner scanner) throws MissingClosingBracketException {
 
-        Pattern entryDataPattern = Pattern.compile("(\\w+)}");
+        Pattern entryDataPattern = Pattern.compile("(.+)}");
         if (scanner.findWithinHorizon(entryDataPattern, 0) != null)
             return scanner.match().group(1);
         else

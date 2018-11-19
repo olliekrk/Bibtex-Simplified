@@ -51,6 +51,7 @@ public class BibtexParser {
                 entryData = ParserUtilities.scanData(scanner);
             } catch (MissingClosingBracketException e) {
                 //exception, notify, interrupts reading rest
+                e.printStackTrace();
                 return bibliography;
             }
 

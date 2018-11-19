@@ -20,14 +20,15 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
     private final String entryDataFormat;
     private final String entryTypeIdFormat;
 
+
     public BibtexPrintingVisitor(char sign, int nameWidth, int valueWidth) {
         this.FIELD_NAME_WIDTH = nameWidth;
         this.FIELD_VALUE_WIDTH = valueWidth;
         this.sign = sign;
-        this.separator = String.join("", Collections.nCopies(FIELD_VALUE_WIDTH + FIELD_NAME_WIDTH + 3, "" + sign)) + '\n';
+        this.separator = String.join("", Collections.nCopies(FIELD_VALUE_WIDTH + FIELD_NAME_WIDTH + 5, "" + sign)) + '\n';
         //TODO: change below Formats
-        this.entryDataFormat = sign + " %-" + FIELD_NAME_WIDTH + "s " + sign + "%-" + FIELD_VALUE_WIDTH + "s" + sign + '\n';
-        this.entryTypeIdFormat = sign + " %-" + FIELD_NAME_WIDTH + "s " + String.join("", Collections.nCopies(FIELD_VALUE_WIDTH, "" + sign)) + '\n';
+        this.entryDataFormat = sign + " %-" + FIELD_NAME_WIDTH + "s " + sign + " %-" + FIELD_VALUE_WIDTH + "s" + sign + '\n';
+        this.entryTypeIdFormat = sign + " %-" + FIELD_NAME_WIDTH + "s " + String.join("", Collections.nCopies(FIELD_VALUE_WIDTH, "" + sign)) + sign + '\n';
     }
 
     @Override
@@ -37,7 +38,7 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
 
         String entryType = BibtexEntryType.findEntryType(bibtexEntry.getClass()).toUpperCase();
         String entryId = bibtexEntry.getId();
-        String entryRow = String.format(entryTypeIdFormat, entryType + "(" + entryId + ")");
+        String entryRow = String.format(entryTypeIdFormat, entryType + " (" + entryId + ")");
         table.append(entryRow);
 
         Field[] fields = bibtexEntry.getClass().getDeclaredFields();
@@ -75,7 +76,12 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
     }
 
     @Override
-    public void visit(BibtexBibliography bibtexBibliography) {
+    public void visit(BibtexBibliography bibliography) {
+        //TODO: add strings displaying
+        //...
 
+        for (BibtexEntry bibtexEntry : bibliography.getAllEntries().values()) {
+            this.visit(bibtexEntry);
+        }
     }
 }

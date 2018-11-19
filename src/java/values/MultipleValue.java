@@ -14,6 +14,7 @@ public class MultipleValue implements IBibtexValue {
         this.values = Arrays
                 .stream(value.getString().split("\\|"))
                 .map(String::trim)
+                .map(StringValue::new)
                 .toArray(IBibtexValue[]::new);
     }
 
