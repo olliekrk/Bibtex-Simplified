@@ -17,6 +17,6 @@ public class MiscEntry extends BibtexEntry {
 
 
     public MiscEntry(String id) {
-        super("misc", id);
+        super(id);
     }
 }

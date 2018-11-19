@@ -20,8 +20,7 @@ public class ArticleEntry extends BibtexEntry {
     public IBibtexValue note;
     public IBibtexValue key;
 
-
     public ArticleEntry(String id) {
-        super("article", id);
+        super(id);
     }
 }

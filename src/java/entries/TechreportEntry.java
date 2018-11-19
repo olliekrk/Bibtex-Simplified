@@ -27,6 +27,6 @@ public class TechreportEntry extends BibtexEntry {
     public IBibtexValue key;
 
     public TechreportEntry(String id) {
-        super("techreport", id);
+        super(id);
     }
 }

@@ -32,6 +32,6 @@ public class InbookEntry extends BibtexEntry {
     public IBibtexValue key;
 
     public InbookEntry(String id) {
-        super("inbook", id);
+        super(id);
     }
 }

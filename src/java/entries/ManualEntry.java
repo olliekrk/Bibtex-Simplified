@@ -19,6 +19,6 @@ public class ManualEntry extends BibtexEntry {
     public IBibtexValue key;
 
     public ManualEntry(String id) {
-        super("manual", id);
+        super(id);
     }
 }

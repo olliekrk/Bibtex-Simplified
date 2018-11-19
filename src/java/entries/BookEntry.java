@@ -25,6 +25,6 @@ public class BookEntry extends BibtexEntry {
     public IBibtexValue key;
 
     public BookEntry(String id) {
-        super("book", id);
+        super(id);
     }
 }

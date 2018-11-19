@@ -17,6 +17,6 @@ public class UnpublishedEntry extends BibtexEntry {
     public IBibtexValue key;
 
     public UnpublishedEntry(String id) {
-        super("unpublished", id);
+        super(id);
     }
 }

@@ -1,6 +1,7 @@
 package parser;
 
 import entries.general.BibtexEntry;
+import entries.general.BibtexEntryFactory;
 import entries.general.BibtexEntryType;
 import exceptions.*;
 import values.IBibtexValue;
@@ -67,7 +68,7 @@ public class BibtexParser {
 
     //method to interpret entry of any known type
 
-    private static void readEntry(String entryType, String entryData, BibtexBibliography bibliography) throws ParsingException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private static void readEntry(String entryType, String entryData, BibtexBibliography bibliography) throws ParsingException {
         if (entryType.equals("string")) {
             readString(entryData, bibliography);
             return;
@@ -76,7 +77,7 @@ public class BibtexParser {
             return;
         }
 
-        Class entryClass = BibtexEntryType.findEntryClass(entryType);
+        Class<? extends BibtexEntry> entryClass = BibtexEntryType.findEntryClass(entryType);
         if (entryClass == null) {
             throw new UnknownEntryTypeException();
         }
@@ -100,13 +101,10 @@ public class BibtexParser {
 
         Map<String, IBibtexValue> entryValues = ParserUtilities.splitIntoValues(entryFields, bibliography);
 
-        //FACTORY instead of that
-        BibtexEntry entry = (BibtexEntry) entryClass.getConstructor(String.class).newInstance(entryId);
-
-        //FACTORY instead of that
-        entry.insertValues(entryValues);
-
-        bibliography.addEntry(entry);
+        BibtexEntry entry = BibtexEntryFactory.createEntry(entryClass, entryId, entryValues);
+        if (entry != null) {
+            bibliography.addEntry(entry);
+        }
     }
 
     //method to interpret @string

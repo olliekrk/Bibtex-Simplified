@@ -22,6 +22,6 @@ public class PhdthesisEntry extends BibtexEntry {
     public IBibtexValue key;
 
     public PhdthesisEntry(String id) {
-        super("phdthesis", id);
+        super(id);
     }
 }

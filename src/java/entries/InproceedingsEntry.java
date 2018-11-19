@@ -28,6 +28,6 @@ public class InproceedingsEntry extends BibtexEntry {
     public IBibtexValue key;
 
     public InproceedingsEntry(String id) {
-        super("inproceedings", id);
+        super(id);
     }
 }
