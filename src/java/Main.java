@@ -1,7 +1,6 @@
-import values.IBibtexValue;
-import values.NumberValue;
-
-import java.util.Arrays;
+import entries.ArticleEntry;
+import entries.general.BibtexEntry;
+import printer.BibtexPrintingVisitor;
 
 public class Main {
     public static void main(String[] args) {
@@ -24,20 +23,26 @@ public class Main {
 //        String[] entryFields = entryx.split(",");
 //        for(String s: entryFields)
 //            System.out.println(s);
+//
+//        String[] values = {"d", "ccccccc", "bbbbb", "aaa"};
+//        String sum = Arrays.stream(values)
+//                .reduce("", ((a, b) -> a + b));
+//        System.out.println(sum);
+//
+//        String s = "ddddddddd";
+//        String[] ts = s.split(",");
+//        for (String t : ts) System.out.println(t);
+//
+//        IBibtexValue a = new NumberValue(22);
+//        System.out.println(a.getClass().toString());
+//
+//        String part = "012345";
+//        System.out.println((part.substring(1, part.length() - 1)));
 
-        String[] values = {"d", "ccccccc", "bbbbb", "aaa"};
-        String sum = Arrays.stream(values)
-                .reduce("", ((a, b) -> a + b));
-        System.out.println(sum);
+//        System.out.println(BibtexEntryType.findEntryType(ArticleEntry.class));
 
-        String s = "ddddddddd";
-        String[] ts = s.split(",");
-        for (String t : ts) System.out.println(t);
-
-        IBibtexValue a = new NumberValue(22);
-        System.out.println(a.getClass().toString());
-
-        String part = "012345";
-        System.out.println((part.substring(1, part.length() - 1)));
+        BibtexEntry e = new ArticleEntry("121211");
+        BibtexPrintingVisitor v = new BibtexPrintingVisitor('~', 20, 20);
+        e.accept(v);
     }
 }

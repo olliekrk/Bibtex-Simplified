@@ -1,7 +1,7 @@
 package entries.general;
 
 import exceptions.MissingRequiredEntryFieldException;
-import utilities.BibtexFieldConstraints;
+import parser.BibtexFieldConstraints;
 import values.IBibtexValue;
 import values.MultipleValue;
 

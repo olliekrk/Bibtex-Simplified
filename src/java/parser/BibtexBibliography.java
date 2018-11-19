@@ -1,12 +1,14 @@
 package parser;
 
+import entries.general.BibtexVisitableElement;
+import entries.general.BibtexVisitor;
 import entries.general.BibtexEntry;
 import values.IBibtexValue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class BibtexBibliography {
+public class BibtexBibliography implements BibtexVisitableElement {
     private Map<String, BibtexEntry> entries = new HashMap<>();
 
     //contains every @string entry
@@ -46,4 +48,8 @@ public class BibtexBibliography {
         return this.values;
     }
 
+    @Override
+    public void accept(BibtexVisitor visitor) {
+        visitor.visit(this);
+    }
 }

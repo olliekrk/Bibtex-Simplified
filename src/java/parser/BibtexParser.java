@@ -9,7 +9,6 @@ import values.IBibtexValue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;

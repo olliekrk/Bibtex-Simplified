@@ -1,7 +1,7 @@
 package entries;
 
 import entries.general.BibtexEntry;
-import utilities.BibtexFieldConstraints;
+import parser.BibtexFieldConstraints;
 import values.IBibtexValue;
 
 public class MiscEntry extends BibtexEntry {

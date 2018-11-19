@@ -17,13 +17,13 @@ public enum BibtexEntryType {
     techreport(TechreportEntry.class),
     unpublished(UnpublishedEntry.class);
 
-    private Class entryClass;
+    private Class<? extends BibtexEntry> entryClass;
 
-    BibtexEntryType(Class entryClass) {
+    BibtexEntryType(Class<? extends BibtexEntry> entryClass) {
         this.entryClass = entryClass;
     }
 
-    public Class getEntryClass() {
+    public Class<? extends BibtexEntry> getEntryClass() {
         return entryClass;
     }
 
@@ -32,5 +32,12 @@ public enum BibtexEntryType {
             if (entryName.toLowerCase().equals(t.name())) return t.getEntryClass();
         }
         return null;
+    }
+
+    public static String findEntryType(Class<? extends BibtexEntry> entryClass) {
+        for (BibtexEntryType t : BibtexEntryType.values()) {
+            if (t.getEntryClass().equals(entryClass)) return t.name().toLowerCase();
+        }
+        return "unknown";
     }
 }
