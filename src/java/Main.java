@@ -46,14 +46,13 @@ public class Main {
 //        BibtexPrintingVisitor v = new BibtexPrintingVisitor('~', 20, 20);
 //        e.accept(v);
 
-        String data = "@INBOOK{inbookcrossref,crossref = \"whole-set\",author=\"makapaczka\",pages=23,publisher=\"dziwaczka\",editor=\"kwaczka\",title = \"Fundamental Algorithms\",volume = 1,series = \"The Art of Computer Programming\",edition = \"Second\",year = \"1973\", type = \"Section\", chapter = \"1.2\", note = \"This is a cross-referencing INBOOK entry\",}";
+        String data = "@INBOOK{inbookcrossref,crossref = \"whole-set\",author=\"makapaczka | sraczka | trzepaczka\",pages=23,publisher=\"dziwaczka\",editor=\"kwaczka | to | niezla | taczka\",title = \"Fundamental Algorithms\",volume = 1,series = \"The Art of Computer Programming\",edition = \"Second\",year = \"1973\", type = \"Section\", chapter = \"1.2\", note = \"This is a cross-referencing INBOOK entry\",}       @STRING{STOCkey = \"OXsingleletterstoc\"}";
+
         BibtexBibliography b = BibtexParser.parseData(data);
-        BibtexPrintingVisitor v = new BibtexPrintingVisitor('+', 40, 40);
         System.out.println(b.getAllEntries().size());
         System.out.println(b.getAllValues().size());
-        BibtexEntry entry = b.getEntry("inbookcrossref");
-        if(entry!=null) v.visit(entry);
 
+        BibtexPrintingVisitor v = new BibtexPrintingVisitor('=', 40, 40);
         v.visit(b);
     }
 }

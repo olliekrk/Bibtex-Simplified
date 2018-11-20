@@ -2,10 +2,10 @@ package values;
 
 import java.util.Arrays;
 
-public class ConcatenatedValue implements IBibtexValue {
+public class ComplexValue implements IBibtexValue {
     private final IBibtexValue[] values;
 
-    public ConcatenatedValue(IBibtexValue[] values) {
+    public ComplexValue(IBibtexValue[] values) {
         this.values = values;
     }
 

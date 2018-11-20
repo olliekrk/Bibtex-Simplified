@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
-public class BibtexParser {
+public class BibtexParser{
 
     //4 ways to input data
 
@@ -128,7 +128,7 @@ public class BibtexParser {
             throw new InvalidEntryException();
         }
 
-        IBibtexValue value = null;
+        IBibtexValue value;
 
         try {
             value = ParserUtilities.readStringValuePart(matcher.group(2), bibliography);

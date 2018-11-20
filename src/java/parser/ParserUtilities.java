@@ -4,7 +4,7 @@ import exceptions.InvalidEntryException;
 import exceptions.MissingClosingBracketException;
 import exceptions.ParsingException;
 import exceptions.UnknownStringReferenceException;
-import values.ConcatenatedValue;
+import values.ComplexValue;
 import values.IBibtexValue;
 import values.NumberValue;
 import values.StringValue;
@@ -18,7 +18,7 @@ public abstract class ParserUtilities {
     //scans data till it encounters }
     public static String scanData(Scanner scanner) throws MissingClosingBracketException {
 
-        Pattern entryDataPattern = Pattern.compile("(.+)}");
+        Pattern entryDataPattern = Pattern.compile("([^}]+)}");
         if (scanner.findWithinHorizon(entryDataPattern, 0) != null)
             return scanner.match().group(1);
         else
@@ -117,7 +117,7 @@ public abstract class ParserUtilities {
         if (values.length == 1) {
             return values[0];
         }
-        return new ConcatenatedValue(values);
+        return new ComplexValue(values);
     }
 
     //method to get single IBibtexValue from its string representation

@@ -27,7 +27,7 @@ public enum BibtexEntryType {
         return entryClass;
     }
 
-    public static Class findEntryClass(String entryName) {
+    public static Class<? extends BibtexEntry> findEntryClass(String entryName) {
         for (BibtexEntryType t : BibtexEntryType.values()) {
             if (entryName.toLowerCase().equals(t.name())) return t.getEntryClass();
         }
@@ -36,7 +36,7 @@ public enum BibtexEntryType {
 
     public static String findEntryType(Class<? extends BibtexEntry> entryClass) {
         for (BibtexEntryType t : BibtexEntryType.values()) {
-            if (t.getEntryClass().equals(entryClass)) return t.name().toLowerCase();
+            if (t.getEntryClass().equals(entryClass)) return t.name();
         }
         return "unknown";
     }

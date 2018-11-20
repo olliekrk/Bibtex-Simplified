@@ -19,7 +19,7 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
     private final String separator;
     private final String entryDataFormat;
     private final String entryTypeIdFormat;
-
+    //private final String entryStringFormat;
 
     public BibtexPrintingVisitor(char sign, int nameWidth, int valueWidth) {
         this.FIELD_NAME_WIDTH = nameWidth;
@@ -29,6 +29,7 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
         //TODO: change below Formats
         this.entryDataFormat = sign + " %-" + FIELD_NAME_WIDTH + "s " + sign + " %-" + FIELD_VALUE_WIDTH + "s" + sign + '\n';
         this.entryTypeIdFormat = sign + " %-" + FIELD_NAME_WIDTH + "s " + String.join("", Collections.nCopies(FIELD_VALUE_WIDTH, "" + sign)) + sign + '\n';
+        //this.entryStringFormat = sig
     }
 
     @Override
@@ -61,8 +62,10 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
                             .map(IBibtexValue::getString)
                             .toArray(String[]::new);
 
+                    String fieldValueRow;
                     for (int i = 0; i < stringValues.length; i++) {
-                        String fieldValueRow = String.format(entryDataFormat, "", stringValues[i]);
+                        String firstColumn = (i == 0) ? fieldName : "";
+                        fieldValueRow = String.format(entryDataFormat, firstColumn, stringValues[i]);
                         table.append(fieldValueRow);
                     }
 
@@ -77,11 +80,21 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
 
     @Override
     public void visit(BibtexBibliography bibliography) {
-        //TODO: add strings displaying
-        //...
+
+        for (String id : bibliography.getAllValues().keySet()) {
+            this.printString(id, bibliography.getValue(id));
+        }
 
         for (BibtexEntry bibtexEntry : bibliography.getAllEntries().values()) {
             this.visit(bibtexEntry);
         }
+    }
+
+    private void printString(String id, IBibtexValue value) {
+        StringBuilder table = new StringBuilder();
+        table.append(separator);
+        String stringRow = String.format(entryDataFormat, "@string " + "(" + id + ")", value.getString());
+        table.append(stringRow);
+        System.out.println(table.toString());
     }
 }
