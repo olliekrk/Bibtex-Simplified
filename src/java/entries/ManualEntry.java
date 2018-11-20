@@ -1,14 +1,14 @@
 package entries;
 
 import entries.general.BibtexEntry;
-import parser.BibtexFieldConstraints;
+import parser.BibtexConstraints;
 import values.IBibtexValue;
 
 public class ManualEntry extends BibtexEntry {
 
-    @BibtexFieldConstraints(required = true)
+    @BibtexConstraints(required = true)
     public IBibtexValue title;
-    @BibtexFieldConstraints(multiple = true)
+    @BibtexConstraints(multiple = true)
     public IBibtexValue author;
     public IBibtexValue organization;
     public IBibtexValue address;

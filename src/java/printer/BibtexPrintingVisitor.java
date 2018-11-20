@@ -10,6 +10,7 @@ import values.MultipleValue;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 
 public class BibtexPrintingVisitor implements BibtexVisitor {
 
@@ -81,8 +82,8 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
     @Override
     public void visit(BibtexBibliography bibliography) {
 
-        for (String id : bibliography.getAllValues().keySet()) {
-            this.printString(id, bibliography.getValue(id));
+        for (Map.Entry<String, IBibtexValue> stringEntry : bibliography.getAllValues().entrySet()) {
+            this.printString(stringEntry.getKey(), stringEntry.getValue());
         }
 
         for (BibtexEntry bibtexEntry : bibliography.getAllEntries().values()) {

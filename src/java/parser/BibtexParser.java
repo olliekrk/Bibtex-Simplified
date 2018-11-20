@@ -82,7 +82,6 @@ public class BibtexParser{
             throw new UnknownEntryTypeException();
         }
 
-        //String[] entryFields = ParserUtilities.splitUsingDelimiter(entryData, ',');
         String[] entryFields = entryData.split(",");
         IntStream.range(0, entryFields.length).forEach(i -> entryFields[i] = entryFields[i].trim());
 
@@ -93,6 +92,7 @@ public class BibtexParser{
         }
 
         String entryId = entryFields[0];
+        //TODO: pattern can have also other ASCIIs
         Pattern entryIdPattern = Pattern.compile("\\w+");
         if (!entryIdPattern.matcher(entryId).matches()) {
             //exception, invalid id of entry
@@ -111,7 +111,6 @@ public class BibtexParser{
 
     private static void readString(String entryData, BibtexBibliography bibliography) throws ParsingException {
 
-        //String[] entryFields = ParserUtilities.splitUsingDelimiter(entryData, ',');
         String[] entryFields = entryData.split(",");
 
         if (entryFields.length != 1) {

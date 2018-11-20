@@ -1,7 +1,7 @@
 package entries.general;
 
 import exceptions.MissingRequiredEntryFieldException;
-import parser.BibtexFieldConstraints;
+import parser.BibtexConstraints;
 import values.IBibtexValue;
 import values.MultipleValue;
 
@@ -24,8 +24,8 @@ public class BibtexEntryFactory {
         Field[] fields = entryClass.getDeclaredFields();
         for (Field field : fields) {
             IBibtexValue value = entryValues.get(field.getName().toLowerCase());
-            if (field.isAnnotationPresent(BibtexFieldConstraints.class)) {
-                BibtexFieldConstraints constraints = field.getAnnotation(BibtexFieldConstraints.class);
+            if (field.isAnnotationPresent(BibtexConstraints.class)) {
+                BibtexConstraints constraints = field.getAnnotation(BibtexConstraints.class);
                 if (value == null && constraints.required()) {
                     throw new MissingRequiredEntryFieldException();
                 }

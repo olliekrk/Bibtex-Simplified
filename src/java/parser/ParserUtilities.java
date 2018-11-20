@@ -9,7 +9,9 @@ import values.IBibtexValue;
 import values.NumberValue;
 import values.StringValue;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,46 +40,6 @@ public abstract class ParserUtilities {
         return scannedData.substring(0, scannedData.length() - 1);*/
     }
 
-    //necessary only if we assume entryData may be invalid
-    public static String[] splitUsingDelimiter(String entryData, char delimiter) throws ParsingException {
-
-        List<String> result = new ArrayList<>();
-        Stack<Character> brackets = new Stack<>();
-
-        int fromIndex = 0;
-        for (int i = 0; i < entryData.length(); i++) {
-            char c = entryData.charAt(i);
-            switch (c) {
-                case '"':
-                    if (brackets.empty()) {
-                        brackets.push(c);
-                    } else if (brackets.peek() == c) {
-                        brackets.pop();
-                    }
-                    break;
-                case '{':
-                    brackets.push(c);
-                    break;
-                case '}':
-                    if (brackets.empty() || brackets.peek() == '"') {
-                        throw new ParsingException();
-                    } else if (brackets.peek() == '{') {
-                        brackets.pop();
-                    }
-                    break;
-            }
-            if (c == delimiter) {
-                if (brackets.empty()) {
-                    result.add(entryData.substring(fromIndex, i).trim());
-                    fromIndex = i + 1;
-                }
-            }
-        }
-        if (fromIndex < entryData.length())
-            result.add(entryData.substring(fromIndex, entryData.length()).trim());
-        return (String[]) result.toArray();
-    }
-
     // method to convert values stored as strings name="value" to map
     public static Map<String, IBibtexValue> splitIntoValues(String[] entryFields, BibtexBibliography bibliography) throws ParsingException, InvalidEntryException, UnknownStringReferenceException {
         Map<String, IBibtexValue> values = new HashMap<>();
@@ -92,7 +54,7 @@ public abstract class ParserUtilities {
                 //exception, field in entry is invalid
                 throw new InvalidEntryException();
             }
-            String fieldName = matcher.group(1);//.toLowerCase() ?
+            String fieldName = matcher.group(1);
             IBibtexValue fieldValue = readFieldValue(matcher.group(2), bibliography);
 
             values.put(fieldName, fieldValue);
@@ -102,7 +64,7 @@ public abstract class ParserUtilities {
 
     //method to get IBibtexValue from its string representation
     public static IBibtexValue readStringValuePart(String valuePart, BibtexBibliography bibliography) throws ParsingException {
-        //String[] parts = splitUsingDelimiter(valuePart, '#');
+
         String[] parts = valuePart.split("#");
         IBibtexValue[] values = new IBibtexValue[parts.length];
 
@@ -129,18 +91,22 @@ public abstract class ParserUtilities {
         if (part.matches("\\d+"))
             return new NumberValue(Integer.parseInt(part));
 
-        //if this is a string
-        if (part.charAt(0) == '"') {
+        //if this is a simple string
+        if (part.charAt(0) == '"' && part.charAt(part.length() - 1) == '"') {
             //return value without quotation marks " "
             return new StringValue(part.substring(1, part.length() - 1));
         }
 
-        //if this is @string reference
+        //if this is simple @string reference
         if (part.matches("[a-zA-Z]\\w+")) {
             if (!bibliography.containsValue(part)) {
                 throw new UnknownStringReferenceException();
             }
             return bibliography.getValue(part);
+        }
+
+        if (part.contains("#")) {
+            return readStringValuePart(part, bibliography);
         }
 
         //else exception, unknown field

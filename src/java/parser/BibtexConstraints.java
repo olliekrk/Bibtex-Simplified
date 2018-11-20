@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BibtexFieldConstraints {
+public @interface BibtexConstraints {
 
     boolean required() default false;
 

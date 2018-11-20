@@ -1,12 +1,12 @@
 package entries;
 
 import entries.general.BibtexEntry;
-import parser.BibtexFieldConstraints;
+import parser.BibtexConstraints;
 import values.IBibtexValue;
 
 public class MiscEntry extends BibtexEntry {
 
-    @BibtexFieldConstraints(multiple = true)
+    @BibtexConstraints(multiple = true)
     public IBibtexValue author;
     public IBibtexValue title;
     public IBibtexValue howpublished;

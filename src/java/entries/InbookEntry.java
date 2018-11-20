@@ -1,25 +1,25 @@
 package entries;
 
 import entries.general.BibtexEntry;
-import parser.BibtexFieldConstraints;
+import parser.BibtexConstraints;
 import values.IBibtexValue;
 
 public class InbookEntry extends BibtexEntry {
 
 
-    @BibtexFieldConstraints(required = true, multiple = true)
+    @BibtexConstraints(required = true, multiple = true)
     public IBibtexValue author;
-    @BibtexFieldConstraints(required = true, multiple = true)
+    @BibtexConstraints(required = true, multiple = true)
     public IBibtexValue editor;
-    @BibtexFieldConstraints(required = true)
+    @BibtexConstraints(required = true)
     public IBibtexValue title;
-    @BibtexFieldConstraints(required = true)
+    @BibtexConstraints(required = true)
     public IBibtexValue chapter;
-    @BibtexFieldConstraints(required = true)
+    @BibtexConstraints(required = true)
     public IBibtexValue pages;
-    @BibtexFieldConstraints(required = true)
+    @BibtexConstraints(required = true)
     public IBibtexValue publisher;
-    @BibtexFieldConstraints(required = true)
+    @BibtexConstraints(required = true)
     public IBibtexValue year;
     public IBibtexValue volume;
     public IBibtexValue number;
