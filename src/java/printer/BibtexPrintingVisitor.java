@@ -1,32 +1,29 @@
 package printer;
 
 import entries.general.BibtexEntry;
-import entries.general.BibtexEntryType;
 import entries.general.BibtexVisitor;
 import parser.BibtexBibliography;
 import values.IBibtexValue;
 import values.MultipleValue;
+import values.PersonValue;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
+
+import static entries.general.BibtexEntryType.findEntryType;
 
 public class BibtexPrintingVisitor implements BibtexVisitor {
 
-    private final int FIELD_NAME_WIDTH;
-    private final int FIELD_VALUE_WIDTH;
-    private final char sign;
     private final String separator;
     private final String rowFormat;
 
     public BibtexPrintingVisitor(char sign, int nameWidth, int valueWidth) {
-        this.FIELD_NAME_WIDTH = nameWidth;
-        this.FIELD_VALUE_WIDTH = valueWidth;
-        this.sign = sign;
-        this.separator = String.join("", Collections.nCopies(FIELD_VALUE_WIDTH + FIELD_NAME_WIDTH + 6, "" + sign)) + '\n';
-        //TODO: modify a little below Formats
-        this.rowFormat = sign + " %-" + FIELD_NAME_WIDTH + "s " + sign + " %-" + FIELD_VALUE_WIDTH + "s" + sign + '\n';
+        this.separator = String.join("", Collections.nCopies(valueWidth + nameWidth + 6, "" + sign)) + '\n';
+        this.rowFormat = sign + " %-" + nameWidth + "s " + sign + " %-" + valueWidth + "s" + sign + '\n';
     }
 
     @Override
@@ -34,7 +31,7 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
         StringBuilder table = new StringBuilder();
         table.append(separator);
 
-        String entryType = BibtexEntryType.findEntryType(bibtexEntry.getClass()).toUpperCase();
+        String entryType = findEntryType(bibtexEntry.getClass()).toUpperCase();
         String entryId = bibtexEntry.getId();
         String entryRow = String.format(rowFormat, entryType + " (" + entryId + ")", " ");
         table.append(entryRow);
@@ -85,6 +82,42 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
         for (BibtexEntry bibtexEntry : bibliography.getAllEntries().values()) {
             this.visit(bibtexEntry);
         }
+    }
+
+    //TODO: THIS VISIT HAS TO BE CHECKED, AS WELL AS FILTERS
+    @Override
+    public void visit(BibtexBibliography bibtexBibliography, Map<String, List<String>> filters) {
+        Stream<BibtexEntry> entries = bibtexBibliography.getAllEntries().values().stream();
+        List<String> authorFilter = filters.get("names");
+        List<String> categoryFilter = filters.get("categories");
+        if (!authorFilter.isEmpty()) {
+            entries = entries.filter(e -> byAuthorFromList(e, authorFilter));
+        }
+        if (!categoryFilter.isEmpty()) {
+            entries = entries.filter(e -> categoryFilter.contains(findEntryType(e.getClass())));
+        }
+        entries.forEach(this::visit);
+    }
+
+    private boolean byAuthorFromList(BibtexEntry entry, List<String> authorFilter) {
+
+        Field authorField;
+
+        try {
+            authorField = entry.getClass().getField("author");
+        } catch (NoSuchFieldException e) {
+            return false;
+        }
+
+        MultipleValue authors = null;
+        try {
+            authors = (MultipleValue) authorField.get(entry);
+        } catch (IllegalAccessException e) {
+            //unlikely to happen as fields in entry classes are public
+            e.printStackTrace();
+        }
+        return authors != null && Arrays.stream(authors.getValues()).map(PersonValue::getLastName).anyMatch(authorFilter::contains);
+
     }
 
     private void printString(String id, IBibtexValue value) {

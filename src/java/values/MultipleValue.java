@@ -8,11 +8,11 @@ import java.util.Objects;
 
 public class MultipleValue implements IBibtexValue {
 
-    private final IBibtexValue[] values;
+    private final PersonValue[] values;
 
     public MultipleValue(IBibtexValue value) throws ParsingException {
-        //TODO: szukanie po nazwiskach autorów, ogólnie formatowanie nazwisk, szukanie po kategoriach
-        this.values = Arrays
+        this.values = (PersonValue[]) Arrays
+                //TODO: co oznacza | i gdzie występuje
                 .stream(value.getString().split("\\|"))
                 .map(String::trim)
                 .map(personData -> {
@@ -24,13 +24,13 @@ public class MultipleValue implements IBibtexValue {
                     return null;
                 })
                 .filter(Objects::nonNull)
-                .toArray(IBibtexValue[]::new);
+                .toArray();
         if (values.length == 0) {
             throw new ParsingException("BiBTeX parser could not find at least one valid person.");
         }
     }
 
-    public IBibtexValue[] getValues() {
+    public PersonValue[] getValues() {
         return values;
     }
 
