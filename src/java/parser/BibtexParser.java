@@ -8,6 +8,7 @@ import values.IBibtexValue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -78,8 +79,10 @@ public class BibtexParser {
             throw new UnknownEntryTypeException(entryType);
         }
 
-        String[] entryFields = entryData.split(",");
-        IntStream.range(0, entryFields.length).forEach(i -> entryFields[i] = entryFields[i].trim());
+        String[] entryFields = Arrays.stream(entryData.split(","))
+                .map(String::trim)
+                .filter(a -> !a.equals(""))
+                .toArray(String[]::new);
 
         if (entryFields.length == 0) {
             //exception, empty entry

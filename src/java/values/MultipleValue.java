@@ -11,7 +11,7 @@ public class MultipleValue implements IBibtexValue {
     private final PersonValue[] values;
 
     public MultipleValue(IBibtexValue value) throws ParsingException {
-        this.values = (PersonValue[]) Arrays
+        this.values = Arrays
                 //TODO: co oznacza | i gdzie występuje
                 .stream(value.getString().split("\\|"))
                 .map(String::trim)
@@ -24,7 +24,7 @@ public class MultipleValue implements IBibtexValue {
                     return null;
                 })
                 .filter(Objects::nonNull)
-                .toArray();
+                .toArray(PersonValue[]::new);
         if (values.length == 0) {
             throw new ParsingException("BiBTeX parser could not find at least one valid person.");
         }

@@ -90,10 +90,10 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
         Stream<BibtexEntry> entries = bibtexBibliography.getAllEntries().values().stream();
         List<String> authorFilter = filters.get("names");
         List<String> categoryFilter = filters.get("categories");
-        if (!authorFilter.isEmpty()) {
+        if (authorFilter != null && !authorFilter.isEmpty()) {
             entries = entries.filter(e -> byAuthorFromList(e, authorFilter));
         }
-        if (!categoryFilter.isEmpty()) {
+        if (categoryFilter != null && !categoryFilter.isEmpty()) {
             entries = entries.filter(e -> categoryFilter.contains(findEntryType(e.getClass())));
         }
         entries.forEach(this::visit);

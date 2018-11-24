@@ -41,7 +41,7 @@ public abstract class BibtexEntry implements BibtexVisitableElement {
                     e.printStackTrace();
                     return false;
                 }
-                if ((value == null) && constraint.equals(required) || constraint.equals(requiredMultiple)) {
+                if ((value == null) && (constraint.equals(required) || constraint.equals(requiredMultiple))) {
                     return false;
                 }
             }

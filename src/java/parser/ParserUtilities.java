@@ -51,8 +51,10 @@ public abstract class ParserUtilities {
             String currentField = entryFields[i];
             Matcher matcher = fieldValuePattern.matcher(currentField);
             if (!matcher.matches()) {
+                //because entry body may end with a coma
+                if (i == entryFields.length - 1 && currentField.equals("")) continue;
                 //exception, field in entry is invalid
-                throw new InvalidEntryException("There was a problem while parsing field of an entry: '" + currentField + "'");
+                throw new ParsingException("There was a problem while parsing field of an entry: '" + currentField + "'");
             }
             String fieldName = matcher.group(1);
             IBibtexValue fieldValue = readFieldValue(matcher.group(2), bibliography);
