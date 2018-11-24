@@ -10,7 +10,5 @@ public interface IBibtexParser {
 
     BibtexBibliography parseFile(File file) throws FileNotFoundException;
 
-    BibtexBibliography parseData(InputStream inputStream);
-
     BibtexBibliography parseData(String Data);
 }

@@ -1,6 +1,8 @@
 package entries.general;
 
+import exceptions.InvalidPersonException;
 import exceptions.MissingRequiredEntryFieldException;
+import exceptions.ParsingException;
 import values.IBibtexValue;
 import values.MultipleValue;
 
@@ -21,7 +23,8 @@ public class BibtexEntryFactory {
         try {
             entry = entryClass.getConstructor(String.class).newInstance(entryId);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            //exception, should not happen because constructor in every entry class exist and is public
+            //exception, should not happen because constructor of every entry class exists and is public
+            e.printStackTrace();
             return null;
         }
 
@@ -32,19 +35,26 @@ public class BibtexEntryFactory {
             BibtexFieldConstraint constraint = entry.getConstraintMap().get(field.getName());
             if (value != null) {
                 if (constraint == multiple || constraint == requiredMultiple || constraint == alternativeMultiple) {
-                    value = new MultipleValue(value);
+                    try {
+                        value = new MultipleValue(value);
+                    } catch (ParsingException e) {
+                        System.out.println(e.getMessage());
+                        continue;
+                    }
                 }
                 try {
                     field.set(entry, value);
                 } catch (IllegalAccessException e) {
                     //exception, should not happen because fields of every entry class are public
                     e.printStackTrace();
+                    return null;
                 }
             }
         }
 
         if (!entry.validateEntry()) {
-            throw new MissingRequiredEntryFieldException();
+            //exception, entry will not be created
+            throw new MissingRequiredEntryFieldException(entry);
         }
 
         return entry;

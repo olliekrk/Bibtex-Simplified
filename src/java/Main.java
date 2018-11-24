@@ -1,58 +1,64 @@
-import entries.general.BibtexEntry;
+import org.apache.commons.cli.*;
 import parser.BibtexBibliography;
 import parser.BibtexParser;
-import printer.BibtexPrintingVisitor;
+
+import java.io.FileNotFoundException;
 
 public class Main {
     public static void main(String[] args) {
-//        Scanner scanner = new Scanner("dfaniuofa}neioufwnocianeoicae}asdfasd}xx");
-//        Pattern entryDataPattern = Pattern.compile("(\\w+)}");
-//        String entryData = scanner.findWithinHorizon(entryDataPattern, 0);
-//        System.out.println(scanner.match().group(1));
+//        String data = "@STRING{STOCkey = \"OXsingleletterstoc\"}@INBOOK{inbookcrossref,PoleNieuwzglednione=123,crossref = \"whole-set\",publisher=\"dziwaczka\",editor=\"kwaczka | to | niezla | taczka | Alfred B. Bekon\",title = \"Fundamental Algorithms\",volume = 1,series = \"The Art of Computer Programming\",edition = \"Second\" # \" \" # stockey ,year = \"1973\", type = \"Section\", chapter = \"1.2\", note = \"This is a cross-referencing INBOOK entry\",}       ";
 //
-//        try {
-//            throw new Exception("aha");
-//        } catch (Exception e) {
-//            System.out.println(e.getCause());
-//        }
+//        BibtexBibliography b = BibtexParser.parseData(data);
+//        System.out.println(b.getAllEntries().size());
+//        System.out.println(b.getAllValues().size());
 //
-//        System.out.println("program idzie dalej");
-//
-//        String lol = "author = \"Daniel\"";
-//        String entryx;
-//        entryx = "author = \"Daniel D. Lincoll\", title = \"Semigroups of Recurrences\"editor = \"David J. Lipcoll and D. H. Lawrie and A. H. Sameh\",booktitle = \"High Speed Computer and Algorithm Organization\",number = 23,series = \"Fast Computers\",chapter = 3,type = \"Part\",pages = \"179--183\",publisher = \"Academic Press\",address = \"New York\",edition = \"Third\",month = sep,year = 1977,note = \"This is a full INCOLLECTION entry\"";
-//        String[] entryFields = entryx.split(",");
-//        for(String s: entryFields)
-//            System.out.println(s);
-//
-//        String[] values = {"d", "ccccccc", "bbbbb", "aaa"};
-//        String sum = Arrays.stream(values)
-//                .reduce("", ((a, b) -> a + b));
-//        System.out.println(sum);
-//
-//        String s = "ddddddddd";
-//        String[] ts = s.split(",");
-//        for (String t : ts) System.out.println(t);
-//
-//        IBibtexValue a = new NumberValue(22);
-//        System.out.println(a.getClass().toString());
-//
-//        String part = "012345";
-//        System.out.println((part.substring(1, part.length() - 1)));
+//        BibtexPrintingVisitor v = new BibtexPrintingVisitor('=', 40, 40);
+//        v.visit(b);
 
-//        System.out.println(BibtexEntryType.findEntryType(ArticleEntry.class));
+        //ABOVE SHOULD WORK
+        CommandLine cmd = parseArguments(args);
+        try {
+            BibtexBibliography bibliography = BibtexParser.parseFile(cmd.getOptionValue("file"));
+        } catch (FileNotFoundException e) {
+            System.out.println("There was a problem to open a file located at: " + cmd.getOptionValue("file"));
+            System.exit(2);
+        }
 
-//        BibtexEntry e = new ArticleEntry("121211");
-//        BibtexPrintingVisitor v = new BibtexPrintingVisitor('~', 20, 20);
-//        e.accept(v);
 
-        String data = "@STRING{STOCkey = \"OXsingleletterstoc\"}@INBOOK{inbookcrossref,crossref = \"whole-set\",publisher=\"dziwaczka\",editor=\"kwaczka | to | niezla | taczka\",title = \"Fundamental Algorithms\",volume = 1,series = \"The Art of Computer Programming\",edition = \"Second\" # \" \" # stockey ,year = \"1973\", type = \"Section\", chapter = \"1.2\", note = \"This is a cross-referencing INBOOK entry\",}       ";
+    }
 
-        BibtexBibliography b = BibtexParser.parseData(data);
-        System.out.println(b.getAllEntries().size());
-        System.out.println(b.getAllValues().size());
+    private static CommandLine parseArguments(String[] args) {
+        Options options = new Options();
 
-        BibtexPrintingVisitor v = new BibtexPrintingVisitor('=', 40, 40);
-        v.visit(b);
+        //todo
+        //może lepiej użyć Option.Builder
+        //to jest opis opcji, a nie to co sie wyswietla, zmienic
+        options.addOption(new Option("n", "names", true, "Input authors (editors) names: "));
+        options.addOption(new Option("c", "categories", true, "Input categories: "));
+        options.addOption(new Option("s", "sign", true, "Input sign to build table: "));
+        options.addOption(new Option("h", "help", false, "help on using this parser"));
+        options.addOption(new Option("f", "file", true, "path to a file which will be parsed"));
+        //...
+
+        HelpFormatter helpFormatter = new HelpFormatter();
+        CommandLineParser parser = new DefaultParser();
+        CommandLine commandLine;
+        try {
+            commandLine = parser.parse(options, args);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            //todo
+            helpFormatter.printHelp("xoxo", options);
+            System.exit(1);
+            return null;
+        }
+
+        if (commandLine.hasOption('h')) {
+            helpFormatter.printHelp("xoxo", options);
+            System.exit(0);
+            return null;
+        }
+
+        return commandLine;
     }
 }

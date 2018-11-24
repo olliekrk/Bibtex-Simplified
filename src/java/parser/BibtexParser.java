@@ -8,16 +8,15 @@ import values.IBibtexValue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
-public class BibtexParser{
+public class BibtexParser {
 
-    //4 ways to input data
+    //3 ways to input data
 
     public static BibtexBibliography parseFile(String path) throws FileNotFoundException {
         return parseBibtex(new Scanner(new File(path)));
@@ -25,10 +24,6 @@ public class BibtexParser{
 
     public static BibtexBibliography parseFile(File file) throws FileNotFoundException {
         return parseBibtex(new Scanner(file));
-    }
-
-    public static BibtexBibliography parseData(InputStream inputStream) {
-        return parseBibtex(new Scanner(inputStream));
     }
 
     public static BibtexBibliography parseData(String data) {
@@ -51,7 +46,7 @@ public class BibtexParser{
                 entryData = ParserUtilities.scanData(scanner);
             } catch (MissingClosingBracketException e) {
                 //exception, notify, interrupts reading rest
-                e.printStackTrace();
+                System.out.println(e.getMessage());
                 return bibliography;
             }
 
@@ -59,7 +54,7 @@ public class BibtexParser{
                 readEntry(entryType, entryData, bibliography);
             } catch (Exception e) {
                 //exception, notify that it was impossible to read that Entry and continue
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
 
@@ -79,7 +74,8 @@ public class BibtexParser{
 
         Class<? extends BibtexEntry> entryClass = BibtexEntryType.findEntryClass(entryType);
         if (entryClass == null) {
-            throw new UnknownEntryTypeException();
+            //exception
+            throw new UnknownEntryTypeException(entryType);
         }
 
         String[] entryFields = entryData.split(",");
@@ -88,15 +84,15 @@ public class BibtexParser{
         if (entryFields.length == 0) {
             //exception, empty entry
             //consider throwing also entry containing only 1 id field
-            throw new InvalidEntryException();
+            throw new InvalidEntryException(entryType);
         }
 
         String entryId = entryFields[0];
-        //TODO: pattern can have also other ASCIIs
-        Pattern entryIdPattern = Pattern.compile("\\w+");
+        //TODO: pattern
+        Pattern entryIdPattern = Pattern.compile("[a-zA-Z0-9].+");
         if (!entryIdPattern.matcher(entryId).matches()) {
             //exception, invalid id of entry
-            throw new InvalidEntryException();
+            throw new InvalidEntryException(entryId, entryType);
         }
 
         Map<String, IBibtexValue> entryValues = ParserUtilities.splitIntoValues(entryFields, bibliography);
@@ -115,7 +111,7 @@ public class BibtexParser{
 
         if (entryFields.length != 1) {
             //exception, string may have only 1 value
-            throw new InvalidEntryException();
+            throw new InvalidEntryException("string");
         }
 
         String stringField = entryFields[0].trim();
@@ -124,7 +120,7 @@ public class BibtexParser{
 
         if (!matcher.matches()) {
             //exception, invalid string entry
-            throw new InvalidEntryException();
+            throw new InvalidEntryException("string");
         }
 
         IBibtexValue value;

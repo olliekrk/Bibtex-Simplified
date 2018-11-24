@@ -18,19 +18,15 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
     private final int FIELD_VALUE_WIDTH;
     private final char sign;
     private final String separator;
-    private final String entryDataFormat;
-    private final String entryTypeIdFormat;
-    //private final String entryStringFormat;
+    private final String rowFormat;
 
     public BibtexPrintingVisitor(char sign, int nameWidth, int valueWidth) {
         this.FIELD_NAME_WIDTH = nameWidth;
         this.FIELD_VALUE_WIDTH = valueWidth;
         this.sign = sign;
-        this.separator = String.join("", Collections.nCopies(FIELD_VALUE_WIDTH + FIELD_NAME_WIDTH + 5, "" + sign)) + '\n';
-        //TODO: change below Formats
-        this.entryDataFormat = sign + " %-" + FIELD_NAME_WIDTH + "s " + sign + " %-" + FIELD_VALUE_WIDTH + "s" + sign + '\n';
-        this.entryTypeIdFormat = sign + " %-" + FIELD_NAME_WIDTH + "s " + String.join("", Collections.nCopies(FIELD_VALUE_WIDTH, "" + sign)) + sign + '\n';
-        //this.entryStringFormat = sig
+        this.separator = String.join("", Collections.nCopies(FIELD_VALUE_WIDTH + FIELD_NAME_WIDTH + 6, "" + sign)) + '\n';
+        //TODO: modify a little below Formats
+        this.rowFormat = sign + " %-" + FIELD_NAME_WIDTH + "s " + sign + " %-" + FIELD_VALUE_WIDTH + "s" + sign + '\n';
     }
 
     @Override
@@ -40,7 +36,7 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
 
         String entryType = BibtexEntryType.findEntryType(bibtexEntry.getClass()).toUpperCase();
         String entryId = bibtexEntry.getId();
-        String entryRow = String.format(entryTypeIdFormat, entryType + " (" + entryId + ")");
+        String entryRow = String.format(rowFormat, entryType + " (" + entryId + ")", " ");
         table.append(entryRow);
 
         Field[] fields = bibtexEntry.getClass().getDeclaredFields();
@@ -66,12 +62,12 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
                     String fieldValueRow;
                     for (int i = 0; i < stringValues.length; i++) {
                         String firstColumn = (i == 0) ? fieldName : "";
-                        fieldValueRow = String.format(entryDataFormat, firstColumn, stringValues[i]);
+                        fieldValueRow = String.format(rowFormat, firstColumn, stringValues[i]);
                         table.append(fieldValueRow);
                     }
 
                 } else {
-                    String firstRow = String.format(entryDataFormat, fieldName, value.getString());
+                    String firstRow = String.format(rowFormat, fieldName, value.getString());
                     table.append(firstRow);
                 }
             }
@@ -94,7 +90,7 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
     private void printString(String id, IBibtexValue value) {
         StringBuilder table = new StringBuilder();
         table.append(separator);
-        String stringRow = String.format(entryDataFormat, "@string " + "(" + id + ")", value.getString());
+        String stringRow = String.format(rowFormat, "@string " + "(" + id + ")", value.getString());
         table.append(stringRow);
         System.out.println(table.toString());
     }

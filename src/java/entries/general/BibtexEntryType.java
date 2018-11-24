@@ -38,6 +38,6 @@ public enum BibtexEntryType {
         for (BibtexEntryType t : BibtexEntryType.values()) {
             if (t.getEntryClass().equals(entryClass)) return t.name();
         }
-        return "unknown";
+        return "UNKNOWN";
     }
 }

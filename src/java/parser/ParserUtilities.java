@@ -41,7 +41,7 @@ public abstract class ParserUtilities {
     }
 
     // method to convert values stored as strings name="value" to map
-    public static Map<String, IBibtexValue> splitIntoValues(String[] entryFields, BibtexBibliography bibliography) throws ParsingException{
+    public static Map<String, IBibtexValue> splitIntoValues(String[] entryFields, BibtexBibliography bibliography) throws ParsingException {
         Map<String, IBibtexValue> values = new HashMap<>();
 
         Pattern fieldValuePattern = Pattern.compile("(\\w+)\\s*=\\s*(\\S.*)");
@@ -52,7 +52,7 @@ public abstract class ParserUtilities {
             Matcher matcher = fieldValuePattern.matcher(currentField);
             if (!matcher.matches()) {
                 //exception, field in entry is invalid
-                throw new InvalidEntryException();
+                throw new InvalidEntryException("There was a problem while parsing field of an entry: '" + currentField + "'");
             }
             String fieldName = matcher.group(1);
             IBibtexValue fieldValue = readFieldValue(matcher.group(2), bibliography);
@@ -74,7 +74,7 @@ public abstract class ParserUtilities {
         }
         if (values.length == 0) {
             //exception, empty field
-            throw new InvalidEntryException();
+            throw new InvalidEntryException("string");
         }
         if (values.length == 1) {
             return values[0];
@@ -100,7 +100,7 @@ public abstract class ParserUtilities {
         //if this is simple @string reference
         if (part.matches("[a-zA-Z]\\w+")) {
             if (!bibliography.containsValue(part)) {
-                throw new UnknownStringReferenceException();
+                throw new UnknownStringReferenceException(part);
             }
             return bibliography.getValue(part);
         }
@@ -110,6 +110,6 @@ public abstract class ParserUtilities {
         }
 
         //else exception, unknown field
-        throw new ParsingException();
+        throw new ParsingException("Incorrect format of entry's field has been detected: '" + part + "'");
     }
 }
