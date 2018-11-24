@@ -4,6 +4,10 @@ import entries.general.BibtexEntry;
 import parser.BibtexConstraints;
 import values.IBibtexValue;
 
+import java.lang.reflect.Field;
+
+import static entries.general.BibtexFieldConstraint.*;
+
 public class InbookEntry extends BibtexEntry {
 
 
@@ -33,5 +37,20 @@ public class InbookEntry extends BibtexEntry {
 
     public InbookEntry(String id) {
         super(id);
+    }
+
+    //public IBibtexValue author, editor, title, chapter, pages, publisher, year, volume, number, series, type, address, edition, month, note, key;
+
+    static {
+        for (Field f : IncollectionEntry.class.getDeclaredFields()) {
+            constraintMap.put(f.getName(), none); //by default there are no constraints of a field
+        }
+        constraintMap.put("author", requiredMultiple);
+        constraintMap.put("editor", requiredMultiple);
+        constraintMap.put("title", required);
+        constraintMap.put("chapter", required);
+        constraintMap.put("pages", required);
+        constraintMap.put("publisher", required);
+        constraintMap.put("year", required);
     }
 }

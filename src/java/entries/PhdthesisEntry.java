@@ -4,6 +4,12 @@ import entries.general.BibtexEntry;
 import parser.BibtexConstraints;
 import values.IBibtexValue;
 
+import java.lang.reflect.Field;
+
+import static entries.general.BibtexFieldConstraint.none;
+import static entries.general.BibtexFieldConstraint.required;
+import static entries.general.BibtexFieldConstraint.requiredMultiple;
+
 
 public class PhdthesisEntry extends BibtexEntry {
 
@@ -23,5 +29,17 @@ public class PhdthesisEntry extends BibtexEntry {
 
     public PhdthesisEntry(String id) {
         super(id);
+    }
+
+//    public IBibtexValue author, title, school, year, type, address, month, note, key;
+
+    static {
+        for (Field f : IncollectionEntry.class.getDeclaredFields()) {
+            constraintMap.put(f.getName(), none); //by default there are no constraints of a field
+        }
+        constraintMap.put("author", requiredMultiple);
+        constraintMap.put("title", required);
+        constraintMap.put("year", required);
+        constraintMap.put("school", required);
     }
 }

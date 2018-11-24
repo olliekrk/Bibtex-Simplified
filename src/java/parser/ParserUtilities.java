@@ -41,7 +41,7 @@ public abstract class ParserUtilities {
     }
 
     // method to convert values stored as strings name="value" to map
-    public static Map<String, IBibtexValue> splitIntoValues(String[] entryFields, BibtexBibliography bibliography) throws ParsingException, InvalidEntryException, UnknownStringReferenceException {
+    public static Map<String, IBibtexValue> splitIntoValues(String[] entryFields, BibtexBibliography bibliography) throws ParsingException{
         Map<String, IBibtexValue> values = new HashMap<>();
 
         Pattern fieldValuePattern = Pattern.compile("(\\w+)\\s*=\\s*(\\S.*)");
