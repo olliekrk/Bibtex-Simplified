@@ -1,6 +1,5 @@
 package entries.general;
 
-import exceptions.InvalidPersonException;
 import exceptions.MissingRequiredEntryFieldException;
 import exceptions.ParsingException;
 import values.IBibtexValue;
@@ -14,7 +13,8 @@ import static entries.general.BibtexFieldConstraint.*;
 
 public class BibtexEntryFactory {
 
-    //method to create entry of earlier validated type(class), id and values
+    //method to create entry of earlier validated type(class), id (format) and values (format)
+    //still, it has to be checked whether entry contains every field that is required
 
     public static BibtexEntry createEntry(Class<? extends BibtexEntry> entryClass, String entryId, Map<String, IBibtexValue> entryValues) throws MissingRequiredEntryFieldException {
 
@@ -31,23 +31,25 @@ public class BibtexEntryFactory {
         Field[] fields = entryClass.getDeclaredFields();
 
         for (Field field : fields) {
-            IBibtexValue value = entryValues.get(field.getName().toLowerCase());
-            BibtexFieldConstraint constraint = entry.getConstraintMap().get(field.getName());
-            if (value != null) {
-                if (constraint == multiple || constraint == requiredMultiple || constraint == alternativeMultiple) {
-                    try {
-                        value = new MultipleValue(value);
-                    } catch (ParsingException e) {
-                        System.out.println(e.getMessage());
-                        continue;
+            if (field.getType().equals(IBibtexValue.class)) {
+                IBibtexValue value = entryValues.get(field.getName().toLowerCase());
+                BibtexFieldConstraint constraint = entry.getConstraintMap().get(field.getName());
+                if (value != null) {
+                    if (constraint == multiple || constraint == requiredMultiple || constraint == alternativeMultiple) {
+                        try {
+                            value = new MultipleValue(value);
+                        } catch (ParsingException e) {
+                            System.out.println(e.getMessage());
+                            continue;
+                        }
                     }
-                }
-                try {
-                    field.set(entry, value);
-                } catch (IllegalAccessException e) {
-                    //exception, should not happen because fields of every entry class are public
-                    e.printStackTrace();
-                    return null;
+                    try {
+                        field.set(entry, value);
+                    } catch (IllegalAccessException e) {
+                        //exception, should not happen because fields of every entry class are public
+                        e.printStackTrace();
+                        return null;
+                    }
                 }
             }
         }

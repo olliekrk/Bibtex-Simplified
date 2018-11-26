@@ -13,8 +13,8 @@ public abstract class BibtexEntry implements BibtexVisitableElement {
 
     private final String id;
 
-    //static map to decide whether that entry field is required / there are possible multiple values
-    protected static Map<String, BibtexFieldConstraint> constraintMap = new HashMap<>();
+    //static map, where keys are classes which extend BibtexEntry and values are maps with constraints of every field
+    protected static Map<Class<? extends BibtexEntry>, Map<String, BibtexFieldConstraint>> classConstraints = new HashMap<>();
 
     public BibtexEntry(String id) {
         this.id = id;
@@ -25,22 +25,30 @@ public abstract class BibtexEntry implements BibtexVisitableElement {
     }
 
     public Map<String, BibtexFieldConstraint> getConstraintMap() {
-        return constraintMap;
+        return classConstraints.get(this.getClass());
     }
 
     public boolean validateEntry() {
-        for (Field f : this.getClass().getDeclaredFields()) {
+        Class entryClass = this.getClass();
+        Map<String, BibtexFieldConstraint> constraintMap = this.getConstraintMap();
+
+        String fieldName;
+        BibtexFieldConstraint constraint;
+        IBibtexValue value;
+
+        for (Field f : entryClass.getDeclaredFields()) {
             if (f.getType().equals(IBibtexValue.class)) {
-                String fieldName = f.getName();
-                BibtexFieldConstraint constraint = constraintMap.get(fieldName);
-                IBibtexValue value;
+
+                fieldName = f.getName();
+                constraint = constraintMap.get(fieldName);
                 try {
                     value = (IBibtexValue) f.get(this);
                 } catch (IllegalAccessException e) {
-                    //exception, unlikely to happen
+                    //exception, unlikely to happen as every field is public
                     e.printStackTrace();
                     return false;
                 }
+
                 if ((value == null) && (constraint.equals(required) || constraint.equals(requiredMultiple))) {
                     return false;
                 }

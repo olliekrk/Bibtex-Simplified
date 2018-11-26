@@ -25,19 +25,6 @@ public abstract class ParserUtilities {
             return scanner.match().group(1);
         else
             throw new MissingClosingBracketException();
-
-        /*int leftBrackets = 1;
-        int rightBrackets = 0;
-
-        StringBuilder data = new StringBuilder("");
-        while (leftBrackets != rightBrackets) {
-            char a = scanner.findWithinHorizon(".", 0).charAt(0);
-            if (a == '{') leftBrackets++;
-            if (a == '}') rightBrackets++;
-            data.append(a);
-        }
-        String scannedData = data.toString();
-        return scannedData.substring(0, scannedData.length() - 1);*/
     }
 
     // method to convert values stored as strings name="value" to map
@@ -46,12 +33,12 @@ public abstract class ParserUtilities {
 
         Pattern fieldValuePattern = Pattern.compile("(\\w+)\\s*=\\s*(\\S.*)");
 
-        //we omit index 0 because it contains entryId which is not value
+        //we omit index 0 because it contains entryId which is not a value
         for (int i = 1; i < entryFields.length; i++) {
             String currentField = entryFields[i];
             Matcher matcher = fieldValuePattern.matcher(currentField);
             if (!matcher.matches()) {
-                //because entry body may end with a coma
+                //check because entry body may end with a coma
                 if (i == entryFields.length - 1 && currentField.equals("")) continue;
                 //exception, field in entry is invalid
                 throw new ParsingException("There was a problem while parsing field of an entry: '" + currentField + "'");
@@ -62,6 +49,37 @@ public abstract class ParserUtilities {
             values.put(fieldName, fieldValue);
         }
         return values;
+    }
+
+    //method to get single IBibtexValue from its string representation
+    private static IBibtexValue readFieldValue(String part, BibtexBibliography bibliography) throws ParsingException {
+
+        part = part.trim();
+
+        //if this is a number
+        if (part.matches("\\d+"))
+            return new NumberValue(Integer.parseInt(part));
+
+        //if this is a simple string
+        if (part.charAt(0) == '"' && part.charAt(part.length() - 1) == '"') {
+            //return value without quotation marks " "
+            return new StringValue(part.substring(1, part.length() - 1));
+        }
+
+        //if this is simple @string reference
+        if (part.matches("[a-zA-Z]\\S*")) {
+            if (!bibliography.containsValue(part)) {
+                throw new UnknownStringReferenceException(part);
+            }
+            return bibliography.getValue(part);
+        }
+
+        if (part.contains("#")) {
+            return readStringValuePart(part, bibliography);
+        }
+
+        //else exception, unknown field
+        throw new ParsingException("Incorrect format of entry's field has been detected: '" + part + "'");
     }
 
     //method to get IBibtexValue from its string representation
@@ -82,36 +100,5 @@ public abstract class ParserUtilities {
             return values[0];
         }
         return new ComplexValue(values);
-    }
-
-    //method to get single IBibtexValue from its string representation
-    private static IBibtexValue readFieldValue(String part, BibtexBibliography bibliography) throws ParsingException {
-
-        part = part.trim();
-
-        //if this is a number
-        if (part.matches("\\d+"))
-            return new NumberValue(Integer.parseInt(part));
-
-        //if this is a simple string
-        if (part.charAt(0) == '"' && part.charAt(part.length() - 1) == '"') {
-            //return value without quotation marks " "
-            return new StringValue(part.substring(1, part.length() - 1));
-        }
-
-        //if this is simple @string reference
-        if (part.matches("[a-zA-Z]\\w+")) {
-            if (!bibliography.containsValue(part)) {
-                throw new UnknownStringReferenceException(part);
-            }
-            return bibliography.getValue(part);
-        }
-
-        if (part.contains("#")) {
-            return readStringValuePart(part, bibliography);
-        }
-
-        //else exception, unknown field
-        throw new ParsingException("Incorrect format of entry's field has been detected: '" + part + "'");
     }
 }

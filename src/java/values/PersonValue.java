@@ -8,13 +8,13 @@ import java.util.regex.Pattern;
 public class PersonValue implements IBibtexValue {
 
     private static final Pattern personPattern1 = Pattern.compile("([A-Z][^\\s]+)\\s+([A-Za-z]+[^\\s]*)\\s+([A-Z][^\\s]+)");
-    public static final Pattern personPattern2 = Pattern.compile("([A-Z][^\\s]+)\\s+([A-Z][^\\s]+)");
+    private static final Pattern personPattern2 = Pattern.compile("([A-Z][^\\s]+)\\s+([A-Z][^\\s]+)");
 
     private final String firstName;
     private final String middleInitial;
     private final String lastName;
 
-    public PersonValue(String personData) throws InvalidPersonException {
+    PersonValue(String personData) throws InvalidPersonException {
         Matcher m = personPattern1.matcher(personData);
         if (m.matches()) {
             this.firstName = m.group(1);

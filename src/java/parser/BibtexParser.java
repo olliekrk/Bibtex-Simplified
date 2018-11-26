@@ -13,31 +13,28 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 public class BibtexParser {
 
-    //3 ways to input data
+    //input data by giving path to .bib file as an argument
 
     public static BibtexBibliography parseFile(String path) throws FileNotFoundException {
         return parseBibtex(new Scanner(new File(path)));
     }
 
-    public static BibtexBibliography parseFile(File file) throws FileNotFoundException {
-        return parseBibtex(new Scanner(file));
-    }
+    //input data by passing it as String object, used mainly for testing purposes
 
     public static BibtexBibliography parseData(String data) {
         return parseBibtex(new Scanner(data));
     }
 
-    //one universal parsing method
+    //method which creates bibtex bibliography as a result
 
     private static BibtexBibliography parseBibtex(Scanner scanner) {
 
         BibtexBibliography bibliography = new BibtexBibliography();
 
-        final Pattern entrySignature = Pattern.compile("@(\\w+)\\s*\\{");
+        Pattern entrySignature = Pattern.compile("@(\\w+)\\s*\\{");
 
         while (scanner.findWithinHorizon(entrySignature, 0) != null) {
             String entryType = scanner.match().group(1).toLowerCase();
@@ -58,7 +55,6 @@ public class BibtexParser {
                 System.out.println(e.getMessage());
             }
         }
-
         return bibliography;
     }
 
@@ -132,6 +128,7 @@ public class BibtexParser {
             value = ParserUtilities.readStringValuePart(matcher.group(2), bibliography);
         } catch (UnknownStringReferenceException e) {
             //exception, notify
+            System.out.println(e.getMessage());
             return;
         }
 

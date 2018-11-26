@@ -12,16 +12,6 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-//        String data = "@STRING{STOCkey = \"OXsingleletterstoc\"}@INBOOK{inbookcrossref,PoleNieuwzglednione=123,crossref = \"whole-set\",publisher=\"dziwaczka\",editor=\"kwaczka | to | niezla | taczka | Alfred B. Bekon\",title = \"Fundamental Algorithms\",volume = 1,series = \"The Art of Computer Programming\",edition = \"Second\" # \" \" # stockey ,year = \"1973\", type = \"Section\", chapter = \"1.2\", note = \"This is a cross-referencing INBOOK entry\",}       ";
-//
-//        BibtexBibliography b = BibtexParser.parseData(data);
-//        System.out.println(b.getAllEntries().size());
-//        System.out.println(b.getAllValues().size());
-//
-//        BibtexPrintingVisitor v = new BibtexPrintingVisitor('=', 40, 40);
-//        v.visit(b);
-
-        //ABOVE SHOULD WORK
 
         CommandLine cmd = prepareCMD(args);
 
@@ -83,7 +73,7 @@ public class Main {
                 .build();
 
         Option sign = Option.builder("s")
-                .longOpt("")
+                .longOpt("sign")
                 .hasArg()
                 .argName("sign")
                 .desc("ASCII sign used to print tables")
@@ -112,7 +102,7 @@ public class Main {
         } catch (ParseException e) {
             System.out.println(e.getMessage());
             System.out.println("Inappropriate use of parser. Please follow syntax displayed below.\n");
-            //print help with a proper use of this parser
+            //prints help with a proper use of this parser
             helpFormatter.printHelp("bibtexparser", header, options, footer, true);
             System.exit(1);
             return null;
@@ -121,7 +111,7 @@ public class Main {
         if (commandLine.hasOption("h")) {
             helpFormatter.printHelp("bibtexparser", header, options, footer, true);
             System.exit(0);
-            return null;
+            return null; //commandLine
         }
 
         return commandLine;

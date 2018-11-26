@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class BibtexBibliography implements BibtexVisitableElement {
 
+    //contains every known-type @ entry
+
     private Map<String, BibtexEntry> entries = new HashMap<>();
 
     //contains every @string entry

@@ -75,13 +75,18 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
     @Override
     public void visit(BibtexBibliography bibliography) {
 
-        for (Map.Entry<String, IBibtexValue> stringEntry : bibliography.getAllValues().entrySet()) {
-            this.printString(stringEntry.getKey(), stringEntry.getValue());
-        }
+        bibliography.getAllValues().forEach(this::printString);
 
-        for (BibtexEntry bibtexEntry : bibliography.getAllEntries().values()) {
-            this.visit(bibtexEntry);
-        }
+        bibliography.getAllEntries().values().forEach(this::visit);
+
+        //to samo bez streamów
+//        for (Map.Entry<String, IBibtexValue> stringEntry : bibliography.getAllValues().entrySet()) {
+//            this.printString(stringEntry.getKey(), stringEntry.getValue());
+//        }
+//
+//        for (BibtexEntry bibtexEntry : bibliography.getAllEntries().values()) {
+//            this.visit(bibtexEntry);
+//        }
     }
 
     //TODO: THIS VISIT HAS TO BE CHECKED, AS WELL AS FILTERS
@@ -117,7 +122,6 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
             e.printStackTrace();
         }
         return authors != null && Arrays.stream(authors.getValues()).map(PersonValue::getLastName).anyMatch(authorFilter::contains);
-
     }
 
     private void printString(String id, IBibtexValue value) {
