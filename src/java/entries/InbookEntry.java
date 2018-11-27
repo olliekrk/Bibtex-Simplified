@@ -2,6 +2,7 @@ package entries;
 
 import entries.general.BibtexEntry;
 import entries.general.BibtexFieldConstraint;
+import exceptions.MissingRequiredEntryFieldException;
 import values.IBibtexValue;
 
 import java.lang.reflect.Field;
@@ -34,10 +35,13 @@ public class InbookEntry extends BibtexEntry {
     }
 
     @Override
-    public boolean validateEntry() {
-        boolean a = author != null || editor != null;
-        boolean b = chapter != null || pages != null;
-        boolean c = super.validateEntry();
-        return a && b && c;
+    public void validateEntry() throws MissingRequiredEntryFieldException, IllegalAccessException {
+        super.validateEntry();
+        if (author == null && editor == null) {
+            throw new MissingRequiredEntryFieldException(this.getId(), "author", "editor");
+        }
+        if (chapter == null && pages == null) {
+            throw new MissingRequiredEntryFieldException(this.getId(), "chapter", "pages");
+        }
     }
 }

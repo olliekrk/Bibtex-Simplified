@@ -1,6 +1,7 @@
 package entries.general;
 
 import entries.*;
+import exceptions.UnknownEntryTypeException;
 
 public enum BibtexEntryType {
 
@@ -27,11 +28,11 @@ public enum BibtexEntryType {
         return entryClass;
     }
 
-    public static Class<? extends BibtexEntry> findEntryClass(String entryName) {
+    public static Class<? extends BibtexEntry> findEntryClass(String entryType) throws UnknownEntryTypeException {
         for (BibtexEntryType t : BibtexEntryType.values()) {
-            if (entryName.toLowerCase().equals(t.name())) return t.getEntryClass();
+            if (entryType.toLowerCase().equals(t.name())) return t.getEntryClass();
         }
-        return null;
+        throw new UnknownEntryTypeException(entryType);
     }
 
     public static String findEntryType(Class<? extends BibtexEntry> entryClass) {

@@ -16,7 +16,7 @@ public class BibtexEntryFactory {
     //method to create entry of earlier validated type(class), id (format) and values (format)
     //still, it has to be checked whether entry contains every field that is required
 
-    public static BibtexEntry createEntry(Class<? extends BibtexEntry> entryClass, String entryId, Map<String, IBibtexValue> entryValues) throws MissingRequiredEntryFieldException {
+    public static BibtexEntry createEntry(Class<? extends BibtexEntry> entryClass, String entryId, Map<String, IBibtexValue> entryValues) {
 
         BibtexEntry entry;
 
@@ -54,11 +54,13 @@ public class BibtexEntryFactory {
             }
         }
 
-        if (!entry.validateEntry()) {
-            //exception, entry will not be created
-            throw new MissingRequiredEntryFieldException(entry);
+        try {
+            entry.validateEntry();
+        } catch (MissingRequiredEntryFieldException | IllegalAccessException e) {
+            System.out.println(e.getMessage());
+            return null;
         }
-
+        
         return entry;
     }
 }

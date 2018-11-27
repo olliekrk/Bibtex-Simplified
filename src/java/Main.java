@@ -13,7 +13,7 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) {
 
-        CommandLine cmd = prepareCMD(args);
+        CommandLine cmd = loadCMD(args);
 
         BibtexBibliography bibliography = null;
 
@@ -45,7 +45,7 @@ public class Main {
         }
     }
 
-    private static CommandLine prepareCMD(String[] args) {
+    private static CommandLine loadCMD(String[] args) {
         Options options = new Options();
 
         Option file = Option.builder("f")
@@ -110,8 +110,8 @@ public class Main {
 
         if (commandLine.hasOption("h")) {
             helpFormatter.printHelp("bibtexparser", header, options, footer, true);
-            System.exit(0);
-            return null; //commandLine
+//            System.exit(0);
+//            return null;
         }
 
         return commandLine;

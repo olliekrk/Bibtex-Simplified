@@ -1,9 +1,11 @@
 package exceptions;
 
-import entries.general.BibtexEntry;
+public class MissingRequiredEntryFieldException extends ParsingException {
+    public MissingRequiredEntryFieldException(String id, String fieldName) {
+        super("Entry of ID: " + id + " could not be parsed because it is missing a required field: " + fieldName + ".");
+    }
 
-public class MissingRequiredEntryFieldException extends ParsingException  {
-    public MissingRequiredEntryFieldException(BibtexEntry entry) {
-        super ("Entry of ID: " + entry.getId() + " could not be parsed because it is missing a required field.");
+    public MissingRequiredEntryFieldException(String id, String field1, String field2) {
+        super("Entry of ID: " + id + " could not be parsed because it is missing both fields: " + field1 + " and " + field2 + ".");
     }
 }

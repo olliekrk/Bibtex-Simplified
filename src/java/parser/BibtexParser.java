@@ -3,12 +3,14 @@ package parser;
 import entries.general.BibtexEntry;
 import entries.general.BibtexEntryFactory;
 import entries.general.BibtexEntryType;
-import exceptions.*;
+import exceptions.InvalidEntryException;
+import exceptions.MissingClosingBracketException;
+import exceptions.ParsingException;
+import exceptions.UnknownStringReferenceException;
 import values.IBibtexValue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -70,33 +72,23 @@ public class BibtexParser {
         }
 
         Class<? extends BibtexEntry> entryClass = BibtexEntryType.findEntryClass(entryType);
-        if (entryClass == null) {
-            //exception
-            throw new UnknownEntryTypeException(entryType);
-        }
 
-        String[] entryFields = Arrays.stream(entryData.split(","))
-                .map(String::trim)
-                .filter(a -> !a.equals(""))
-                .toArray(String[]::new);
-
-        if (entryFields.length == 0) {
-            //exception, empty entry
-            //consider throwing also entry containing only 1 id field
-            throw new InvalidEntryException(entryType);
-        }
+        String[] entryFields = ParserUtilities.splitIntoFields(entryType, entryData);
 
         String entryId = entryFields[0];
+
         //TODO: pattern
         Pattern entryIdPattern = Pattern.compile("[a-zA-Z0-9].+");
+
+        //exception, invalid id of entry
         if (!entryIdPattern.matcher(entryId).matches()) {
-            //exception, invalid id of entry
-            throw new InvalidEntryException(entryId, entryType);
+            throw new InvalidEntryException(entryType, entryId);
         }
 
         Map<String, IBibtexValue> entryValues = ParserUtilities.splitIntoValues(entryFields, bibliography);
 
         BibtexEntry entry = BibtexEntryFactory.createEntry(entryClass, entryId, entryValues);
+
         if (entry != null) {
             bibliography.addEntry(entry);
         }
@@ -125,7 +117,7 @@ public class BibtexParser {
         IBibtexValue value;
 
         try {
-            value = ParserUtilities.readStringValuePart(matcher.group(2), bibliography);
+            value = ParserUtilities.readStrings(matcher.group(2), bibliography);
         } catch (UnknownStringReferenceException e) {
             //exception, notify
             System.out.println(e.getMessage());

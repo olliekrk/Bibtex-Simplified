@@ -1,5 +1,6 @@
 package entries.general;
 
+import exceptions.MissingRequiredEntryFieldException;
 import values.IBibtexValue;
 
 import java.lang.reflect.Field;
@@ -28,7 +29,7 @@ public abstract class BibtexEntry implements BibtexVisitableElement {
         return classConstraints.get(this.getClass());
     }
 
-    public boolean validateEntry() {
+    public void validateEntry() throws MissingRequiredEntryFieldException, IllegalAccessException {
         Class entryClass = this.getClass();
         Map<String, BibtexFieldConstraint> constraintMap = this.getConstraintMap();
 
@@ -41,20 +42,13 @@ public abstract class BibtexEntry implements BibtexVisitableElement {
 
                 fieldName = f.getName();
                 constraint = constraintMap.get(fieldName);
-                try {
-                    value = (IBibtexValue) f.get(this);
-                } catch (IllegalAccessException e) {
-                    //exception, unlikely to happen as every field is public
-                    e.printStackTrace();
-                    return false;
-                }
+                value = (IBibtexValue) f.get(this);
 
                 if ((value == null) && (constraint.equals(required) || constraint.equals(requiredMultiple))) {
-                    return false;
+                    throw new MissingRequiredEntryFieldException(this.getId(), f.getName());
                 }
             }
         }
-        return true;
     }
 
     @Override
