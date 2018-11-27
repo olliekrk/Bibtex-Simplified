@@ -11,22 +11,22 @@ public class MultipleValue implements IBibtexValue {
     private final PersonValue[] values;
 
     public MultipleValue(IBibtexValue value) throws ParsingException {
+
         this.values = Arrays
-                //TODO: co oznacza | i gdzie występuje
-                .stream(value.getString().split("\\|"))
+                .stream(value.getString().split(" and "))
                 .map(String::trim)
                 .map(personData -> {
                     try {
                         return new PersonValue(personData);
                     } catch (InvalidPersonException e) {
                         System.out.println(e.getMessage());
+                        return null;
                     }
-                    return null;
                 })
                 .filter(Objects::nonNull)
                 .toArray(PersonValue[]::new);
-        if (values.length == 0) {
-            throw new ParsingException("BiBTeX parser could not find at least one valid person.");
+        if (this.values.length == 0) {
+            throw new InvalidPersonException(value);
         }
     }
 

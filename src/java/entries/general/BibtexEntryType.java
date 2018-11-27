@@ -24,7 +24,7 @@ public enum BibtexEntryType {
         this.entryClass = entryClass;
     }
 
-    public Class<? extends BibtexEntry> getEntryClass() {
+    private Class<? extends BibtexEntry> getEntryClass() {
         return entryClass;
     }
 
@@ -39,6 +39,6 @@ public enum BibtexEntryType {
         for (BibtexEntryType t : BibtexEntryType.values()) {
             if (t.getEntryClass().equals(entryClass)) return t.name();
         }
-        return "UNKNOWN";
+        return "unknown";
     }
 }

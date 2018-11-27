@@ -6,7 +6,6 @@ import entries.general.BibtexEntryType;
 import exceptions.InvalidEntryException;
 import exceptions.MissingClosingBracketException;
 import exceptions.ParsingException;
-import exceptions.UnknownStringReferenceException;
 import values.IBibtexValue;
 
 import java.io.File;
@@ -77,7 +76,6 @@ public class BibtexParser {
 
         String entryId = entryFields[0];
 
-        //TODO: pattern
         Pattern entryIdPattern = Pattern.compile("[a-zA-Z0-9].+");
 
         //exception, invalid id of entry
@@ -98,14 +96,14 @@ public class BibtexParser {
 
     private static void readString(String entryData, BibtexBibliography bibliography) throws ParsingException {
 
-        String[] entryFields = entryData.split(",");
+        String[] entryFields = ParserUtilities.splitIntoFields("string", entryData);
 
         if (entryFields.length != 1) {
             //exception, string may have only 1 value
             throw new InvalidEntryException("string");
         }
 
-        String stringField = entryFields[0].trim();
+        String stringField = entryFields[0];
         Pattern fieldValuePattern = Pattern.compile("(\\w+)\\s*=\\s*(\\S.*)");
         Matcher matcher = fieldValuePattern.matcher(stringField);
 
@@ -114,19 +112,7 @@ public class BibtexParser {
             throw new InvalidEntryException("string");
         }
 
-        IBibtexValue value;
-
-        try {
-            value = ParserUtilities.readStrings(matcher.group(2), bibliography);
-        } catch (UnknownStringReferenceException e) {
-            //exception, notify
-            System.out.println(e.getMessage());
-            return;
-        }
-
-        if (!(value == null)) {
-            bibliography.addValue(matcher.group(1), value);
-        }
+        IBibtexValue value = ParserUtilities.readStrings(matcher.group(2), bibliography);
+        bibliography.addValue(matcher.group(1), value);
     }
-
 }

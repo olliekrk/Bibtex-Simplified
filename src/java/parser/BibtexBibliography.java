@@ -4,6 +4,7 @@ import entries.general.BibtexEntry;
 import entries.general.BibtexVisitableElement;
 import entries.general.BibtexVisitor;
 import values.IBibtexValue;
+import values.StringValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,13 @@ public class BibtexBibliography implements BibtexVisitableElement {
     //contains every @string entry
 
     private Map<String, IBibtexValue> values = new HashMap<>();
+
+    public BibtexBibliography() {
+        String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        for (String m : months) {
+            this.addValue(m.substring(0, 3).toLowerCase(), new StringValue(m));
+        }
+    }
 
     public BibtexEntry addEntry(BibtexEntry entry) {
         BibtexEntry previous = entries.put(entry.getId().toLowerCase(), entry);

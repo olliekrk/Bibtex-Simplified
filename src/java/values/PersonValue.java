@@ -7,27 +7,44 @@ import java.util.regex.Pattern;
 
 public class PersonValue implements IBibtexValue {
 
-    private static final Pattern personPattern1 = Pattern.compile("([A-Z][^\\s]+)\\s+([A-Za-z]+[^\\s]*)\\s+([A-Z][^\\s]+)");
-    private static final Pattern personPattern2 = Pattern.compile("([A-Z][^\\s]+)\\s+([A-Z][^\\s]+)");
+    private static final Pattern[] personPatterns = {
+            Pattern.compile("([A-Z]\\S*)\\s*\\|\\s*([A-Za-z]\\S*)"),
+            Pattern.compile("([A-Z]\\S*)\\s+([A-Za-z]+\\S*)\\s+([A-Z]\\S*)"),
+            Pattern.compile("([A-Z]\\S*)\\s+([A-Z]\\S*)")
+    };
 
     private final String firstName;
-    private final String middleInitial;
+    private final String middleName;
     private final String lastName;
 
     PersonValue(String personData) throws InvalidPersonException {
-        Matcher m = personPattern1.matcher(personData);
-        if (m.matches()) {
-            this.firstName = m.group(1);
-            this.middleInitial = m.group(2);
-            this.lastName = m.group(3);
-        } else {
-            m = personPattern2.matcher(personData);
+        Matcher m;
+        String first = null;
+        String mid = null;
+        String last = null;
+        for (int i = 0; i < personPatterns.length; i++) {
+            m = personPatterns[i].matcher(personData);
             if (m.matches()) {
-                this.firstName = m.group(1);
-                this.lastName = m.group(2);
-                this.middleInitial = null;
-            } else throw new InvalidPersonException(personData);
+                if (i == 0) {
+                    first = m.group(2);
+                    last = m.group(1);
+                }
+                if (i == 1) {
+                    first = m.group(1);
+                    mid = m.group(2);
+                    last = m.group(3);
+                }
+                if (i == 2) {
+                    first = m.group(1);
+                    last = m.group(2);
+                }
+                this.firstName = first;
+                this.middleName = mid;
+                this.lastName = last;
+                return;
+            }
         }
+        throw new InvalidPersonException(personData);
     }
 
     public String getLastName() {
@@ -51,7 +68,7 @@ public class PersonValue implements IBibtexValue {
 
     @Override
     public String getString() {
-        String mid = (middleInitial == null) ? " " : " " + middleInitial + " ";
+        String mid = (middleName == null) ? " " : " " + middleName + " ";
         return firstName + mid + lastName;
     }
 }

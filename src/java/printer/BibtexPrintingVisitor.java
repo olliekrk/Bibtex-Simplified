@@ -79,17 +79,8 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
 
         bibliography.getAllEntries().values().forEach(this::visit);
 
-        //to samo bez streamów
-//        for (Map.Entry<String, IBibtexValue> stringEntry : bibliography.getAllValues().entrySet()) {
-//            this.printString(stringEntry.getKey(), stringEntry.getValue());
-//        }
-//
-//        for (BibtexEntry bibtexEntry : bibliography.getAllEntries().values()) {
-//            this.visit(bibtexEntry);
-//        }
     }
 
-    //TODO: THIS VISIT HAS TO BE CHECKED, AS WELL AS FILTERS
     @Override
     public void visit(BibtexBibliography bibtexBibliography, Map<String, List<String>> filters) {
         Stream<BibtexEntry> entries = bibtexBibliography.getAllEntries().values().stream();

@@ -101,7 +101,7 @@ public abstract class ParserUtilities {
                 .filter(Objects::nonNull)
                 .reduce("", ((a, b) -> a + b));
 
-        if (finalValue.equals("")) throw new InvalidEntryException("string");
+        if (finalValue.length() == 0) throw new InvalidEntryException("string");
         return new StringValue(finalValue);
     }
 
@@ -127,9 +127,11 @@ public abstract class ParserUtilities {
             }
         }
 
+        if (field.length() != 0) fieldList.add(field.toString());
+
         String[] result = fieldList.stream()
                 .map(String::trim)
-                .filter(a -> !a.equals(""))
+                .filter(a -> a.length() > 0)
                 .toArray(String[]::new);
 
         if (result.length == 0)
