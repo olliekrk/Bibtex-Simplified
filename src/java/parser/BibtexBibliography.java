@@ -24,6 +24,10 @@ public class BibtexBibliography implements BibtexVisitableElement {
         for (String m : months) {
             this.addValue(m.substring(0, 3).toLowerCase(), new StringValue(m));
         }
+        String[] companies = {"The OX Association for Computing Machinery", " Symposium on the Theory of Computing"};
+        String[] companiesShort = {"ACM", "STOC"};
+        this.addValue(companiesShort[0], new StringValue(companies[0]));
+        this.addValue(companiesShort[1], new StringValue(companies[1]));
     }
 
     public BibtexEntry addEntry(BibtexEntry entry) {

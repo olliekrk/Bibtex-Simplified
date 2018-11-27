@@ -110,8 +110,6 @@ public class Main {
 
         if (commandLine.hasOption("h")) {
             helpFormatter.printHelp("bibtexparser", header, options, footer, true);
-//            System.exit(0);
-//            return null;
         }
 
         return commandLine;
