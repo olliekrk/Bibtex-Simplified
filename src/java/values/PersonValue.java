@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class PersonValue implements IBibtexValue {
 
     private static final Pattern[] personPatterns = {
-            Pattern.compile("([A-Z]\\S*)\\s*\\|\\s*([A-Za-z]\\S*)"),
+            Pattern.compile("([A-Z].*)\\s*\\|\\s*([A-Za-z]\\S*)"),
             Pattern.compile("([A-Z]\\S*)\\s+([A-Za-z]+\\S*)\\s+([A-Z]\\S*)"),
             Pattern.compile("([A-Z]\\S*)\\s+([A-Z]\\S*)")
     };
@@ -38,9 +38,9 @@ public class PersonValue implements IBibtexValue {
                     first = m.group(1);
                     last = m.group(2);
                 }
-                this.firstName = first;
-                this.middleName = mid;
-                this.lastName = last;
+                this.firstName = first==null? null : first.trim();
+                this.middleName = mid==null? null : mid.trim();
+                this.lastName = last==null? null : last.trim();
                 return;
             }
         }

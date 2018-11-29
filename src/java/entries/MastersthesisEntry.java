@@ -10,9 +10,9 @@ import java.util.Map;
 
 import static entries.general.BibtexFieldConstraint.*;
 
-public class MasterthesisEntry extends BibtexEntry {
+public class MastersthesisEntry extends BibtexEntry {
 
-    public MasterthesisEntry(String id) {
+    public MastersthesisEntry(String id) {
         super(id);
     }
 
@@ -20,13 +20,13 @@ public class MasterthesisEntry extends BibtexEntry {
 
     static {
         Map<String, BibtexFieldConstraint> constraintMap = new HashMap<>();
-        for (Field f : MasterthesisEntry.class.getDeclaredFields()) {
+        for (Field f : MastersthesisEntry.class.getDeclaredFields()) {
             constraintMap.put(f.getName(), none); //by default there are no constraints of a field
         }
         constraintMap.put("author", requiredMultiple);
         constraintMap.put("title", required);
         constraintMap.put("school", required);
         constraintMap.put("year", required);
-        classConstraints.put(MasterthesisEntry.class, constraintMap);
+        classConstraints.put(MastersthesisEntry.class, constraintMap);
     }
 }

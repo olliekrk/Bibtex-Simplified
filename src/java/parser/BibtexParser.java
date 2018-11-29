@@ -61,7 +61,7 @@ public class BibtexParser {
 
     //method to interpret entry of any known type
 
-    private static void readEntry(String entryType, String entryData, BibtexBibliography bibliography) throws ParsingException {
+    public static void readEntry(String entryType, String entryData, BibtexBibliography bibliography) throws ParsingException {
         if (entryType.equals("string")) {
             readString(entryData, bibliography);
             return;
@@ -94,17 +94,16 @@ public class BibtexParser {
 
     //method to interpret @string
 
-    private static void readString(String entryData, BibtexBibliography bibliography) throws ParsingException {
+    public static void readString(String entryData, BibtexBibliography bibliography) throws ParsingException {
 
         String[] entryFields = ParserUtilities.splitIntoFields("string", entryData);
-
         if (entryFields.length != 1) {
             //exception, string may have only 1 value
             throw new InvalidEntryException("string");
         }
 
         String stringField = entryFields[0];
-        Pattern fieldValuePattern = Pattern.compile("(\\w+)\\s*=\\s*(\\S.*)");
+        Pattern fieldValuePattern = Pattern.compile("(\\S+)\\s*=\\s*(\\S.*)");
         Matcher matcher = fieldValuePattern.matcher(stringField);
 
         if (!matcher.matches()) {

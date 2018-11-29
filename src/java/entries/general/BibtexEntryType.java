@@ -12,7 +12,7 @@ public enum BibtexEntryType {
     incollection(IncollectionEntry.class),
     inproceedings(InproceedingsEntry.class),
     manual(ManualEntry.class),
-    masterthesis(MasterthesisEntry.class),
+    mastersthesis(MastersthesisEntry.class),
     misc(MiscEntry.class),
     phdthesis(PhdthesisEntry.class),
     techreport(TechreportEntry.class),
