@@ -24,6 +24,42 @@ public abstract class ParserUtilities {
             throw new MissingClosingBracketException();
     }
 
+    //method to split string data into string fields
+    public static String[] splitIntoFields(String entryType, String entryData) throws InvalidEntryException {
+        List<String> fieldList = new ArrayList<>();
+        Scanner scanner = new Scanner(entryData);
+        int quotationMarks = 0;
+        StringBuilder field = new StringBuilder();
+        while (scanner.findWithinHorizon(".", 0) != null) {
+            char c = scanner.match().group().charAt(0);
+            switch (c) {
+                case ',':
+                    if (quotationMarks % 2 == 0) {
+                        fieldList.add(field.toString().trim());
+                        field = new StringBuilder();
+                    }
+                    break;
+                case '"':
+                    quotationMarks++;
+                default:
+                    field.append(c);
+                    break;
+            }
+        }
+
+        if (field.length() != 0) fieldList.add(field.toString());
+
+        String[] result = fieldList.stream()
+                .map(String::trim)
+                .filter(a -> a.length() > 0)
+                .toArray(String[]::new);
+
+        if (result.length == 0)
+            throw new InvalidEntryException(entryType, 0);
+
+        return result;
+    }
+
     // method to convert values stored as strings name="value" to map
     public static Map<String, IBibtexValue> splitIntoValues(String[] entryFields, BibtexBibliography bibliography) throws ParsingException {
         Map<String, IBibtexValue> values = new HashMap<>();
@@ -47,7 +83,7 @@ public abstract class ParserUtilities {
     }
 
     //method to get single IBibtexValue from its string representation
-    private static IBibtexValue readFieldValue(String part, BibtexBibliography bibliography) throws ParsingException {
+    public static IBibtexValue readFieldValue(String part, BibtexBibliography bibliography) throws ParsingException {
 
         part = part.trim();
 
@@ -83,8 +119,10 @@ public abstract class ParserUtilities {
             }
         }
         //necessary for last value
-        if (value.length() != 0)
-            values.add(value.toString().trim());
+        String last = value.toString().trim();
+        if (last.length() != 0) {
+            values.add(last);
+        }
 
         String finalValue = values.stream()
                 .map(a -> {
@@ -101,42 +139,7 @@ public abstract class ParserUtilities {
                 .filter(Objects::nonNull)
                 .reduce("", ((a, b) -> a + b));
 
-        if (finalValue.length() == 0) throw new InvalidEntryException("string");
+        if (finalValue.length() == 0) throw new InvalidEntryException("string", "unknown", part);
         return new StringValue(finalValue);
-    }
-
-    public static String[] splitIntoFields(String entryType, String entryData) throws InvalidEntryException {
-        List<String> fieldList = new ArrayList<>();
-        Scanner scanner = new Scanner(entryData);
-        int quotationMarks = 0;
-        StringBuilder field = new StringBuilder();
-        while (scanner.findWithinHorizon(".", 0) != null) {
-            char c = scanner.match().group().charAt(0);
-            switch (c) {
-                case ',':
-                    if (quotationMarks % 2 == 0) {
-                        fieldList.add(field.toString().trim());
-                        field = new StringBuilder();
-                    }
-                    break;
-                case '"':
-                    quotationMarks++;
-                default:
-                    field.append(c);
-                    break;
-            }
-        }
-
-        if (field.length() != 0) fieldList.add(field.toString());
-
-        String[] result = fieldList.stream()
-                .map(String::trim)
-                .filter(a -> a.length() > 0)
-                .toArray(String[]::new);
-
-        if (result.length == 0)
-            throw new InvalidEntryException(entryType, 0);
-
-        return result;
     }
 }

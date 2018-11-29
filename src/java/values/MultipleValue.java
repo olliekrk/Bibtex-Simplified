@@ -35,21 +35,6 @@ public class MultipleValue implements IBibtexValue {
     }
 
     @Override
-    public boolean isNumber() {
-        return false;
-    }
-
-    @Override
-    public boolean isString() {
-        return true;
-    }
-
-    @Override
-    public int getNumber() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getString() {
         return null;
     }

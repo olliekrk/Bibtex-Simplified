@@ -23,12 +23,6 @@ public class BibtexParser {
         return parseBibtex(new Scanner(new File(path)));
     }
 
-    //input data by passing it as String object, used mainly for testing purposes
-
-    public static BibtexBibliography parseData(String data) {
-        return parseBibtex(new Scanner(data));
-    }
-
     //method which creates bibtex bibliography as a result
 
     private static BibtexBibliography parseBibtex(Scanner scanner) {
@@ -99,7 +93,7 @@ public class BibtexParser {
         String[] entryFields = ParserUtilities.splitIntoFields("string", entryData);
         if (entryFields.length != 1) {
             //exception, string may have only 1 value
-            throw new InvalidEntryException("string");
+            throw new InvalidEntryException("string","unknown",entryData);
         }
 
         String stringField = entryFields[0];
@@ -108,7 +102,7 @@ public class BibtexParser {
 
         if (!matcher.matches()) {
             //exception, invalid string entry
-            throw new InvalidEntryException("string");
+            throw new InvalidEntryException("string","unknown",entryData);
         }
 
         IBibtexValue value = ParserUtilities.readStrings(matcher.group(2), bibliography);
