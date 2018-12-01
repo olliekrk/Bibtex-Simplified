@@ -10,14 +10,27 @@ import java.util.Map;
 
 import static entries.general.BibtexFieldConstraint.*;
 
+/**
+ * Container for @UNPUBLISHED type BibTeX entry.
+ */
 public class UnpublishedEntry extends BibtexEntry {
 
+    /**
+     * All fields which are not ignored in BibTeX format of this entry type.
+     * Their values are stored as {@link IBibtexValue}.
+     */
+    public IBibtexValue author, title, note, month, year, key;
+
+    /**
+     * Returns id of this entry
+     *
+     * @param id of this entry
+     */
     public UnpublishedEntry(String id) {
         super(id);
     }
 
-    public IBibtexValue author, title, note, month, year, key;
-
+    /* filling constraint map with constraints */
     static {
         Map<String, BibtexFieldConstraint> constraintMap = new HashMap<>();
         for (Field f : UnpublishedEntry.class.getDeclaredFields()) {

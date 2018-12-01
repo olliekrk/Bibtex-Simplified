@@ -16,16 +16,39 @@ import java.util.stream.Stream;
 
 import static entries.general.BibtexEntryType.findEntryType;
 
+/**
+ * Class which is a part of Visitor design pattern.
+ * It is a visitor class that is responsible for printing data stored in {@link BibtexBibliography} in a form of tables.
+ */
 public class BibtexPrintingVisitor implements BibtexVisitor {
 
+    /**
+     * Row that separates two next {@link BibtexEntry} tables
+     */
     private final String separator;
+    /**
+     * String format of an every row present in created table
+     */
     private final String rowFormat;
 
+    /**
+     * Constructor which sets up format of a table, i.e. width of table cells and sign of which borders will be made.
+     *
+     * @param sign       sign of which borders of tables will be made
+     * @param nameWidth  width of cells which contain name of a field or name of an entry
+     * @param valueWidth width of cells which contain value of a field
+     */
     public BibtexPrintingVisitor(char sign, int nameWidth, int valueWidth) {
         this.separator = String.join("", Collections.nCopies(valueWidth + nameWidth + 6, "" + sign)) + '\n';
         this.rowFormat = sign + " %-" + nameWidth + "s " + sign + " %-" + valueWidth + "s" + sign + '\n';
     }
 
+    /**
+     * Prints a table containing data from a single {@link BibtexEntry}.
+     *
+     * @param bibtexEntry entry for which table will be printed
+     * @see BibtexVisitor
+     */
     @Override
     public void visit(BibtexEntry bibtexEntry) {
         StringBuilder table = new StringBuilder();
@@ -72,6 +95,12 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
         System.out.println(table.toString());
     }
 
+    /**
+     * Prints tables for every single entry stored in given bibliography.
+     * Firstly prints all @STRING entries, then prints every other type entries.
+     *
+     * @param bibliography bibliography from which data will be printed
+     */
     @Override
     public void visit(BibtexBibliography bibliography) {
 
@@ -81,6 +110,13 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
 
     }
 
+    /**
+     * Prints tables for those entries stored in given bibliography, which
+     * match filters given as an second parameter.
+     *
+     * @param bibtexBibliography bibliography to be visited
+     * @param filters            map in which keys are names of fields which are included in filter operation
+     */
     @Override
     public void visit(BibtexBibliography bibtexBibliography, Map<String, List<String>> filters) {
         Stream<BibtexEntry> entries = bibtexBibliography.getAllEntries().values().stream();
@@ -95,6 +131,14 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
         entries.forEach(this::visit);
     }
 
+    /**
+     * Method which returns boolean value depending on whether given entry's author
+     * is on the list of authors - i. e. if the entry matches given authors filter.
+     *
+     * @param entry        entry which is checked
+     * @param authorFilter list of authors' last names
+     * @return true if entry's author is on the filter list, otherwise false
+     */
     private boolean byAuthorFromList(BibtexEntry entry, List<String> authorFilter) {
 
         Field authorField;
@@ -115,6 +159,13 @@ public class BibtexPrintingVisitor implements BibtexVisitor {
         return authors != null && Arrays.stream(authors.getValues()).map(PersonValue::getLastName).anyMatch(authorFilter::contains);
     }
 
+    /**
+     * Method used during visiting whole bibliography, to print @STRING entries data
+     * contained in visited bibliography.
+     *
+     * @param id    id of a @STRING entry
+     * @param value value of a @STRING entry
+     */
     private void printString(String id, IBibtexValue value) {
         StringBuilder table = new StringBuilder();
         table.append(separator);

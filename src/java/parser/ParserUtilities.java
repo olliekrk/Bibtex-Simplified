@@ -12,9 +12,19 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Abstract class with all static method used during parsing BibTeX files with {@link BibtexParser}
+ */
 public abstract class ParserUtilities {
 
-    //scans data till it encounters }
+    /**
+     * Scans data from a scanner and returns it as a string to the part
+     * when the first closing bracket '}' was encountered.
+     *
+     * @param scanner scanner containing data that has not yet been parsed
+     * @return string data fragment which is between '{}' braces
+     * @throws MissingClosingBracketException when BibTeX file which is parsed misses closing bracket(s)
+     */
     public static String scanData(Scanner scanner) throws MissingClosingBracketException {
 
         Pattern entryDataPattern = Pattern.compile("([^}]*)}");
@@ -24,7 +34,15 @@ public abstract class ParserUtilities {
             throw new MissingClosingBracketException();
     }
 
-    //method to split string data into string fields
+    /**
+     * Method which splits string data of an entry of given type to a single fields.
+     * Fields in BibTeX file are separated by commas.
+     *
+     * @param entryType type of entry which data is split
+     * @param entryData data to be split
+     * @return array of string fields representation in a form of: "field_name = field_value"
+     * @throws InvalidEntryException when there has been problem with parsing that entry
+     */
     public static String[] splitIntoFields(String entryType, String entryData) throws InvalidEntryException {
         List<String> fieldList = new ArrayList<>();
         Scanner scanner = new Scanner(entryData);
@@ -60,7 +78,16 @@ public abstract class ParserUtilities {
         return result;
     }
 
-    // method to convert values stored as strings name="value" to map
+    /**
+     * Method which converts entry fields stored in array in a form of: "field_name = field_value"
+     * to their object representation. Returns map of parsed fields where keys are string fields' names
+     * and values are {@link IBibtexValue} containing parsed values of those fields.
+     *
+     * @param entryFields  array of entry fields
+     * @param bibliography bibliography which parser uses to refer to @STRING entries' values
+     * @return map of parsed fields with fields' names as keys and fields' values as values
+     * @throws ParsingException when there has been problem with converting string fields into object values
+     */
     public static Map<String, IBibtexValue> splitIntoValues(String[] entryFields, BibtexBibliography bibliography) throws ParsingException {
         Map<String, IBibtexValue> values = new HashMap<>();
 
@@ -82,7 +109,15 @@ public abstract class ParserUtilities {
         return values;
     }
 
-    //method to get single IBibtexValue from its string representation
+    /**
+     * Method which converts string representation of a entry's single field value to its object form.
+     * Returns result of that conversion.
+     *
+     * @param part         data to be parsed
+     * @param bibliography bibliography which parser uses to refer to @STRING entries' values
+     * @return {@link IBibtexValue} created from given data
+     * @throws ParsingException when there was a problem during parsing given data
+     */
     public static IBibtexValue readFieldValue(String part, BibtexBibliography bibliography) throws ParsingException {
 
         part = part.trim();
@@ -94,7 +129,16 @@ public abstract class ParserUtilities {
         return readStrings(part, bibliography);
     }
 
-    //method to get IBibtexValue from its string representation
+    /**
+     * Method which converts string representation of a entry's single field string value to its object form.
+     * Returns result of that conversion.
+     *
+     * @param part         data to be parsed
+     * @param bibliography bibliography which parser uses to refer to @STRING entries' values
+     * @return {@link IBibtexValue} created from given data
+     * @throws UnknownStringReferenceException when given data contained reference to an unknown @STRING entry
+     * @throws InvalidEntryException           when there was a problem with parsing given data
+     */
     public static IBibtexValue readStrings(String part, BibtexBibliography bibliography) throws ParsingException {
         List<String> values = new ArrayList<>();
         StringBuilder value = new StringBuilder();
@@ -139,7 +183,7 @@ public abstract class ParserUtilities {
                 .filter(Objects::nonNull)
                 .reduce("", ((a, b) -> a + b));
 
-        if (finalValue.length() == 0) throw new InvalidEntryException("string", "unknown", part);
+        if (finalValue.length() == 0) throw new ParsingException("Parsed string value of: " + part + " is empty!");
         return new StringValue(finalValue);
     }
 }

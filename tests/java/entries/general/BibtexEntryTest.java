@@ -26,7 +26,7 @@ public class BibtexEntryTest {
     }
 
     @Test(expected = MissingRequiredEntryFieldException.class)
-    public void validateEntryWhenRequiredFieldisMissingTest() throws MissingRequiredEntryFieldException, IllegalAccessException {
+    public void validateEntryWhenRequiredFieldIsMissingTest() throws MissingRequiredEntryFieldException, IllegalAccessException {
         entry.title = null;
         entry.validateEntry();
     }

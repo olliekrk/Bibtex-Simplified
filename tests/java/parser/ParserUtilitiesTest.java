@@ -111,7 +111,7 @@ public class ParserUtilitiesTest {
     @Test
     public void invalidFieldValueTest() throws ParsingException {
         exception.expect(ParsingException.class);
-        exception.expectMessage(new InvalidEntryException("string", "unknown", "").getMessage());
+        exception.expectMessage(new ParsingException("Parsed string value of:  is empty!").getMessage());
         IBibtexValue value = ParserUtilities.readFieldValue("", bibtex);
     }
 }

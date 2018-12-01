@@ -15,16 +15,30 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class used for parsing .bib files and creating {@link BibtexBibliography}.
+ * All methods in this class are static.
+ */
 public class BibtexParser {
 
-    //input data by giving path to .bib file as an argument
-
+    /**
+     * Main parsing method.
+     * Returns new {@link BibtexBibliography} created by reading .bib file that is located under given path.
+     *
+     * @param path path to a .bib file
+     * @return bibliography created on given file
+     * @throws FileNotFoundException when there is a problem finding .bib file under given path
+     */
     public static BibtexBibliography parseFile(String path) throws FileNotFoundException {
         return parseBibtex(new Scanner(new File(path)));
     }
 
-    //method which creates bibtex bibliography as a result
-
+    /**
+     * Method which returns new {@link BibtexBibliography} based on data from scanner.
+     *
+     * @param scanner scanner which contains BibTeX data
+     * @return bibliography created on given data
+     */
     private static BibtexBibliography parseBibtex(Scanner scanner) {
 
         BibtexBibliography bibliography = new BibtexBibliography();
@@ -38,7 +52,7 @@ public class BibtexParser {
             try {
                 entryData = ParserUtilities.scanData(scanner);
             } catch (MissingClosingBracketException e) {
-                //exception, notify, interrupts reading rest
+                //exception, notify, interrupt reading rest
                 System.out.println(e.getMessage());
                 return bibliography;
             }
@@ -53,8 +67,16 @@ public class BibtexParser {
         return bibliography;
     }
 
-    //method to interpret entry of any known type
-
+    /**
+     * Method used to create single {@link BibtexEntry} based on given data.
+     * If entry is valid it adds created entry to bibliography.
+     * If there was any problem with parsing that entry, it notifies about it and does not add that entry to bibliography.
+     *
+     * @param entryType    type of the entry
+     * @param entryData    content of the entry
+     * @param bibliography bibliography to which entry will be eventually added
+     * @throws ParsingException when there occurs any problem with the data
+     */
     public static void readEntry(String entryType, String entryData, BibtexBibliography bibliography) throws ParsingException {
         if (entryType.equals("string")) {
             readString(entryData, bibliography);
@@ -86,14 +108,20 @@ public class BibtexParser {
         }
     }
 
-    //method to interpret @string
-
+    /**
+     * Method used to create single @STRING entry from given data.
+     * If @STRING entry is valid, this method adds it to bibliography.
+     *
+     * @param entryData    string data to be parsed
+     * @param bibliography bibliography to which @STRING will be eventually added
+     * @throws ParsingException when there occurs any problem with the data
+     */
     public static void readString(String entryData, BibtexBibliography bibliography) throws ParsingException {
 
         String[] entryFields = ParserUtilities.splitIntoFields("string", entryData);
         if (entryFields.length != 1) {
             //exception, string may have only 1 value
-            throw new InvalidEntryException("string","unknown",entryData);
+            throw new InvalidEntryException("string", "unknown", entryData);
         }
 
         String stringField = entryFields[0];
@@ -102,7 +130,7 @@ public class BibtexParser {
 
         if (!matcher.matches()) {
             //exception, invalid string entry
-            throw new InvalidEntryException("string","unknown",entryData);
+            throw new InvalidEntryException("string", "unknown", entryData);
         }
 
         IBibtexValue value = ParserUtilities.readStrings(matcher.group(2), bibliography);

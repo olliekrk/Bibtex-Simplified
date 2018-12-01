@@ -10,14 +10,27 @@ import java.util.Map;
 
 import static entries.general.BibtexFieldConstraint.*;
 
+/**
+ * Container for @BOOKLET type BibTeX entry.
+ */
 public class BookletEntry extends BibtexEntry {
 
+    /**
+     * All fields which are not ignored in BibTeX format of this entry type.
+     * Their values are stored as {@link IBibtexValue}.
+     */
+    public IBibtexValue title, author, howpublished, address, month, year, note, key;
+
+    /**
+     * Returns id of this entry
+     *
+     * @param id of this entry
+     */
     public BookletEntry(String id) {
         super(id);
     }
 
-    public IBibtexValue title, author, howpublished, address, month, year, note, key;
-
+    /* filling constraint map with constraints */
     static {
         Map<String, BibtexFieldConstraint> constraintMap = new HashMap<>();
         for (Field f : BookletEntry.class.getDeclaredFields()) {

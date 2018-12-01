@@ -10,14 +10,27 @@ import java.util.Map;
 
 import static entries.general.BibtexFieldConstraint.*;
 
+/**
+ * Container for @INPROCEEDINGS type BibTeX entry.
+ */
 public class InproceedingsEntry extends BibtexEntry {
 
+    /**
+     * All fields which are not ignored in BibTeX format of this entry type.
+     * Their values are stored as {@link IBibtexValue}.
+     */
+    public IBibtexValue author, title, booktitle, year, editor, volume, number, series, pages, address, month, organization, publisher, note, key;
+
+    /**
+     * Returns id of this entry
+     *
+     * @param id of this entry
+     */
     public InproceedingsEntry(String id) {
         super(id);
     }
 
-    public IBibtexValue author, title, booktitle, year, editor, volume, number, series, pages, address, month, organization, publisher, note, key;
-
+    /* filling constraint map with constraints */
     static {
         Map<String, BibtexFieldConstraint> constraintMap = new HashMap<>();
         for (Field f : InproceedingsEntry.class.getDeclaredFields()) {

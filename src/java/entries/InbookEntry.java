@@ -11,14 +11,27 @@ import java.util.Map;
 
 import static entries.general.BibtexFieldConstraint.*;
 
+/**
+ * Container for @INBOOK type BibTeX entry.
+ */
 public class InbookEntry extends BibtexEntry {
 
+    /**
+     * All fields which are not ignored in BibTeX format of this entry type.
+     * Their values are stored as {@link IBibtexValue}.
+     */
+    public IBibtexValue author, editor, title, chapter, pages, publisher, year, volume, number, series, type, address, edition, month, note, key;
+
+    /**
+     * Returns id of this entry
+     *
+     * @param id of this entry
+     */
     public InbookEntry(String id) {
         super(id);
     }
 
-    public IBibtexValue author, editor, title, chapter, pages, publisher, year, volume, number, series, type, address, edition, month, note, key;
-
+    /* filling constraint map with constraints */
     static {
         Map<String, BibtexFieldConstraint> constraintMap = new HashMap<>();
         for (Field f : InbookEntry.class.getDeclaredFields()) {
@@ -34,6 +47,13 @@ public class InbookEntry extends BibtexEntry {
         classConstraints.put(InbookEntry.class, constraintMap);
     }
 
+    /**
+     * Method to validate entry - it is valid when it contains every field which is required
+     * and at least one from every pair of alternative fields.
+     *
+     * @throws MissingRequiredEntryFieldException when entry is invalid
+     * @throws IllegalAccessException             unlikely to happen
+     */
     @Override
     public void validateEntry() throws MissingRequiredEntryFieldException, IllegalAccessException {
         super.validateEntry();

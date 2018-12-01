@@ -11,11 +11,21 @@ import java.util.Map;
 
 import static entries.general.BibtexFieldConstraint.*;
 
+/**
+ * Factory method design pattern class used to create {@link BibtexEntry}
+ */
 public class BibtexEntryFactory {
 
-    //method to create entry of earlier validated type(class), id (format) and values (format)
-    //still, it has to be checked whether entry contains every field that is required
-
+    /**
+     * Method used to create entry of earlier validated type (class), id and values given as arguments.
+     * It checks whether entry to be created contains every field which is required.
+     * If it does not, this method returns null and notifies about this fact by printing it to the console.
+     *
+     * @param entryClass  class of which entry should be created
+     * @param entryId     id of an entry to be created
+     * @param entryValues map containing names of fields as keys and corresponding {@link IBibtexValue} as values in this map
+     * @return null if entry is invalid, otherwise {@link BibtexEntry} object of class given as first argument
+     */
     public static BibtexEntry createEntry(Class<? extends BibtexEntry> entryClass, String entryId, Map<String, IBibtexValue> entryValues) {
 
         BibtexEntry entry;
@@ -60,7 +70,7 @@ public class BibtexEntryFactory {
             System.out.println(e.getMessage());
             return null;
         }
-        
+
         return entry;
     }
 }
