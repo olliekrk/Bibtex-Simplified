@@ -108,6 +108,6 @@ public class BibtexParserTest {
 
         path = "C:\\Users\\Olgierd\\Desktop\\non_existing_file.bib";
         exception.expect(FileNotFoundException.class);
-        bib2 = BibtexParser.parseFile(path);
+        BibtexParser.parseFile(path);
     }
 }

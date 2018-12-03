@@ -105,13 +105,13 @@ public class ParserUtilitiesTest {
     @Test
     public void unknownStringReferenceTest() throws ParsingException {
         exception.expect(ParsingException.class);
-        IBibtexValue value = ParserUtilities.readFieldValue(" ref1 # ref2", bibtex);
+        ParserUtilities.readFieldValue(" ref1 # ref2", bibtex);
     }
 
     @Test
     public void invalidFieldValueTest() throws ParsingException {
         exception.expect(ParsingException.class);
         exception.expectMessage(new ParsingException("Parsed string value of:  is empty!").getMessage());
-        IBibtexValue value = ParserUtilities.readFieldValue("", bibtex);
+        ParserUtilities.readFieldValue("", bibtex);
     }
 }

@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class used for parsing .bib files and creating {@link BibtexBibliography}.
+ * Class used for parsing .bib files and creating {@link BibtexBibliography} object as a result of parsing.
  * All methods in this class are static.
  */
 public class BibtexParser {
