@@ -2,8 +2,10 @@ package entries.general;
 
 import exceptions.MissingRequiredEntryFieldException;
 import exceptions.ParsingException;
+import parser.BibtexBibliography;
 import values.IBibtexValue;
 import values.MultipleValue;
+import values.StringValue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -21,12 +23,13 @@ public class BibtexEntryFactory {
      * It checks whether entry to be created contains every field which is required.
      * If it does not, this method returns null and notifies about this fact by printing it to the console.
      *
-     * @param entryClass  class of which entry should be created
-     * @param entryId     id of an entry to be created
-     * @param entryValues map containing names of fields as keys and corresponding {@link IBibtexValue} as values in this map
+     * @param entryClass   class of which entry should be created
+     * @param entryId      id of an entry to be created
+     * @param entryValues  map containing names of fields as keys and corresponding {@link IBibtexValue} as values in this map
+     * @param bibliography bibliography used to access cross-referenced entries
      * @return null if entry is invalid, otherwise {@link BibtexEntry} object of class given as first argument
      */
-    public static BibtexEntry createEntry(Class<? extends BibtexEntry> entryClass, String entryId, Map<String, IBibtexValue> entryValues) {
+    public static BibtexEntry createEntry(Class<? extends BibtexEntry> entryClass, String entryId, Map<String, IBibtexValue> entryValues, BibtexBibliography bibliography) {
 
         BibtexEntry entry;
 
@@ -60,6 +63,23 @@ public class BibtexEntryFactory {
                         e.printStackTrace();
                         return null;
                     }
+                }
+            }
+        }
+
+        //cross-referencing
+        if (entryValues.containsKey("crossref")) {
+            String refersToID = entryValues.get("crossref").getString().toLowerCase();
+            BibtexEntry refersTo = bibliography.getEntry(refersToID);
+
+            for (Field field : fields) {
+                try {
+                    if (field.get(entry) == null) {
+                        field.set(entry, field.get(refersTo));
+                    }
+                } catch (IllegalAccessException e) {
+                    //unlikely to happen
+                    e.printStackTrace();
                 }
             }
         }

@@ -3,6 +3,7 @@ package entries.general;
 import entries.BookEntry;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import parser.BibtexBibliography;
 import values.IBibtexValue;
 import values.NumberValue;
 import values.StringValue;
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class BibtexEntryFactoryTest {
 
+    BibtexBibliography bibliography = new BibtexBibliography();
     private final String id = "book1";
     private final String msg = "Created entry which should not be created!";
     private static Map<String, IBibtexValue> values;
@@ -48,7 +50,7 @@ public class BibtexEntryFactoryTest {
         values.remove("note");
 
         //only ID test
-        assertEquals(msg, null, BibtexEntryFactory.createEntry(BookEntry.class, id, values));
+        assertEquals(msg, null, BibtexEntryFactory.createEntry(BookEntry.class, id, values, bibliography));
     }
 
     @Test
@@ -56,7 +58,7 @@ public class BibtexEntryFactoryTest {
         values.remove("title");
 
         //missing required field test
-        assertEquals(msg, null, BibtexEntryFactory.createEntry(BookEntry.class, id, values));
+        assertEquals(msg, null, BibtexEntryFactory.createEntry(BookEntry.class, id, values, bibliography));
     }
 
     @Test
@@ -64,13 +66,13 @@ public class BibtexEntryFactoryTest {
         values.remove("author");
 
         //missing both alternative author and editor fields test
-        assertEquals(msg, null, BibtexEntryFactory.createEntry(BookEntry.class, id, values));
+        assertEquals(msg, null, BibtexEntryFactory.createEntry(BookEntry.class, id, values, bibliography));
     }
 
     @Test
     public void createEntryTest() {
 
         //valid entry test
-        assertNotNull(msg, BibtexEntryFactory.createEntry(BookEntry.class, id, values));
+        assertNotNull(msg, BibtexEntryFactory.createEntry(BookEntry.class, id, values, bibliography));
     }
 }

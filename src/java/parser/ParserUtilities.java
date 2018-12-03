@@ -102,9 +102,17 @@ public abstract class ParserUtilities {
                 //exception, field in entry is invalid
                 throw new ParsingException("Field of an entry of ID: " + entryId + " could not be parsed: " + currentField + "");
             }
-            String fieldName = matcher.group(1);
-            IBibtexValue fieldValue = readFieldValue(matcher.group(2), bibliography);
-            values.put(fieldName, fieldValue);
+            String fieldName = matcher.group(1).trim().toLowerCase();
+
+            //cross-referencing
+            if (fieldName.equals("crossref")) {
+                String refersTo = matcher.group(2).trim().substring(1, matcher.group(2).length() - 1).toLowerCase();
+                if (bibliography.containsEntry(refersTo))
+                    values.put(fieldName, new StringValue(refersTo));
+            } else {
+                IBibtexValue fieldValue = readFieldValue(matcher.group(2), bibliography);
+                values.put(fieldName, fieldValue);
+            }
         }
         return values;
     }

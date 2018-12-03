@@ -101,7 +101,7 @@ public class BibtexParser {
 
         Map<String, IBibtexValue> entryValues = ParserUtilities.splitIntoValues(entryFields, bibliography);
 
-        BibtexEntry entry = BibtexEntryFactory.createEntry(entryClass, entryId, entryValues);
+        BibtexEntry entry = BibtexEntryFactory.createEntry(entryClass, entryId, entryValues, bibliography);
 
         if (entry != null) {
             bibliography.addEntry(entry);

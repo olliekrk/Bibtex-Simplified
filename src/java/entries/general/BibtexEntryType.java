@@ -14,6 +14,7 @@ public enum BibtexEntryType {
     inbook(InbookEntry.class),
     incollection(IncollectionEntry.class),
     inproceedings(InproceedingsEntry.class),
+    conference(InproceedingsEntry.class),
     manual(ManualEntry.class),
     mastersthesis(MastersthesisEntry.class),
     misc(MiscEntry.class),

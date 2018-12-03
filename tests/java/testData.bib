@@ -1,5 +1,14 @@
 @STRING{str1="abc"}
-@STRING{str2="def"}
+
+@BOOK{whole-set,
+   author = "Donald E. Knuth",
+   publisher = "Addison|Wesley",
+   title = "The Art of Computer Programming",
+   series = "Four volumes",
+   year = 1974,
+   note = "Seven volumes planned (this is a cross-referenced set of BOOKs)",
+}
+
 @ARTICLE{article-minimal,
    author = "Leslie A. Aamport",
    title = "The Gnats and Gnus Document Preparation System",
@@ -19,17 +28,6 @@
    note = "This is a full ARTICLE entry",
 }
 
-
-
-@ARTICLE{article-crossref,
-   crossref = "WHOLE-JOURNAL",
-   key = "",
-   author = "Leslie A. Aamport",
-   title = "The Gnats and Gnus Document Preparation System",
-   pages = "73+",
-   note = "This is a cross-referencing ARTICLE entry",
-}
-
 @ARTICLE{whole-journal,
    key = "GAJ",
    journal = "G-Animal's Journal",
@@ -40,6 +38,8 @@
    note = "The entire issue is devoted to gnats and gnus
                 (this entry is a cross-referenced ARTICLE (journal))",
 }
+
+
 
 @INBOOK{inbook-minimal,
    author = "Donald E. Knuth",
@@ -84,6 +84,15 @@
    year = 1981,
 }
 
+@ARTICLE{article-crossref,
+   crossref = "WHOLE-JOURNAL",
+   key = "",
+   author = "Leslie A. Aamport",
+   title = "The Gnats and Gnus Document Preparation System",
+   pages = "73+",
+   note = "This is a cross-referencing ARTICLE entry",
+}
+
 @BOOK{book-full,
    author = "Donald E. Knuth",
    title = "Seminumerical Algorithms",
@@ -105,15 +114,6 @@
    edition = "Second",
    year = 1981,
    note = "This is a cross-referencing BOOK entry",
-}
-
-@BOOK{whole-set,
-   author = "Donald E. Knuth",
-   publisher = "Addison|Wesley",
-   title = "The Art of Computer Programming",
-   series = "Four volumes",
-   year = 1974,
-   note = "Seven volumes planned (this is a cross-referenced set of BOOKs)",
 }
 
 @BOOKLET{booklet-minimal,
@@ -157,14 +157,6 @@
    note = "This is a full INCOLLECTION entry",
 }
 
-@INCOLLECTION{incollection-crossref,
-   crossref = "whole-collection",
-   author = "Daniel D. Lincoll",
-   title = "Semigroups of Recurrences",
-   pages = "179--183",
-   note = "This is a cross-referencing INCOLLECTION entry",
-}
-
 @BOOK{whole-collection,
    editor = "David J. Lipcoll and D. H. Lawrie and A. H. Sameh",
    title = "High Speed Computer and Algorithm Organization",
@@ -178,6 +170,15 @@
    year = 1977,
    note = "This is a cross-referenced BOOK (collection) entry",
 }
+
+@INCOLLECTION{incollection-crossref,
+   crossref = "whole-collection",
+   author = "Daniel D. Lincoll",
+   title = "Semigroups of Recurrences",
+   pages = "179--183",
+   note = "This is a cross-referencing INCOLLECTION entry",
+}
+
 
 @MANUAL{manual-minimal,
    key = "Manmaker",
@@ -256,6 +257,16 @@
    note = "This is a full INPROCEDINGS entry",
 }
 
+@INPROCEEDINGS{whole-proceedings,
+   key = STOC-key,
+   organization = ACM,
+   title = "Proc. Fifteenth Annual" # STOC,
+   address = "Boston",
+   year = 1983,
+   booktitle = "Proc. Fifteenth Annual ACM" # STOC,
+   note = "This is a cross-referenced PROCEEDINGS",
+}
+
 @INPROCEEDINGS{inproceedings-crossref,
    crossref = "whole-proceedings",
    author = "Alfred V. Oaho and Jeffrey D. Ullman and Mihalis Yannakakis",
@@ -282,16 +293,6 @@
    organization = ACM,
    publisher = "Academic Press",
    note = "This is a full PROCEEDINGS entry",
-}
-
-@INPROCEEDINGS{whole-proceedings,
-   key = STOC-key,
-   organization = ACM,
-   title = "Proc. Fifteenth Annual" # STOC,
-   address = "Boston",
-   year = 1983,
-   booktitle = "Proc. Fifteenth Annual ACM" # STOC,
-   note = "This is a cross-referenced PROCEEDINGS",
 }
 
 @PHDTHESIS{phdthesis-minimal,
