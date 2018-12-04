@@ -4,6 +4,7 @@ import entries.general.BibtexEntryTypeTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import parser.BibtexBibliographyTest;
+import parser.BibtexParserRunnerTest;
 import parser.BibtexParserTest;
 import parser.ParserUtilitiesTest;
 import printer.BibtexPrintingVisitorTest;
@@ -21,7 +22,7 @@ import values.PersonValueTest;
         BibtexBibliographyTest.class,
         ParserUtilitiesTest.class,
         BibtexPrintingVisitorTest.class,
-        MainTest.class
+        BibtexParserRunnerTest.class
 })
 public class AllTests {
 

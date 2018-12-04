@@ -21,7 +21,7 @@ public class BibtexPrintingVisitorTest {
     @BeforeClass
     public static void prepareVisitor() throws FileNotFoundException {
         bibtex = BibtexParser.parseFile("C:\\Users\\Olgierd\\Desktop\\OlgierdKrolik_PO1\\tests\\java\\testData.bib");
-        visitor = new BibtexPrintingVisitor('*', 60, 60);
+        visitor = new BibtexPrintingVisitor('*', 40, 80);
         List<String> names = Arrays.asList("Knuth", "Aamport", "Lincoll", "Knvth");
         List<String> categories = Arrays.asList("inbook", "incollection", "book", "article", "booklet");
         filters.put("names", names);

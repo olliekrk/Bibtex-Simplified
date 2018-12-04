@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class BibtexParser {
 
     /**
-     * Main parsing method.
+     * parser.BibtexParserRunner parsing method.
      * Returns new {@link BibtexBibliography} created by reading .bib file that is located under given path.
      *
      * @param path path to a .bib file
