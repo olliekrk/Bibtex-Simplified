@@ -5,7 +5,6 @@ import exceptions.ParsingException;
 import parser.BibtexBibliography;
 import values.IBibtexValue;
 import values.MultipleValue;
-import values.StringValue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -69,17 +68,27 @@ public class BibtexEntryFactory {
 
         //cross-referencing
         if (entryValues.containsKey("crossref")) {
-            String refersToID = entryValues.get("crossref").getString().toLowerCase();
+            String refersToID = entryValues.get("crossref").getString();
             BibtexEntry refersTo = bibliography.getEntry(refersToID);
+            Map<String, BibtexFieldConstraint> refersFields = refersTo.getConstraintMap();
 
             for (Field field : fields) {
-                try {
-                    if (field.get(entry) == null) {
-                        field.set(entry, field.get(refersTo));
+                String fieldName = field.getName();
+                if (refersFields.containsKey(fieldName)) {
+                    Field referField;
+                    try {
+                        referField = refersTo.getClass().getDeclaredField(fieldName);
+                        if (referField != null) {
+                            IBibtexValue referValue = (IBibtexValue) referField.get(refersTo);
+                            if (referValue != null)
+                                field.set(entry, referValue);
+                        }
+                    } catch (NoSuchFieldException e) {
+                        //just do not set referencing field
+                    } catch (IllegalAccessException e) {
+                        //unlikely to happen
+                        e.printStackTrace();
                     }
-                } catch (IllegalAccessException e) {
-                    //unlikely to happen
-                    e.printStackTrace();
                 }
             }
         }

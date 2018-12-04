@@ -106,7 +106,7 @@ public abstract class ParserUtilities {
 
             //cross-referencing
             if (fieldName.equals("crossref")) {
-                String refersTo = matcher.group(2).trim().substring(1, matcher.group(2).length() - 1).toLowerCase();
+                String refersTo = matcher.group(2).trim().substring(1, matcher.group(2).length() - 1);
                 if (bibliography.containsEntry(refersTo))
                     values.put(fieldName, new StringValue(refersTo));
             } else {
